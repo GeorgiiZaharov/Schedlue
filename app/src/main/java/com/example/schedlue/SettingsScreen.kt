@@ -1,7 +1,9 @@
 package com.example.schedlue
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -33,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -133,7 +138,10 @@ fun SettingsScreenContent(context: Context, modifier: Modifier) {
         setThemePreference(context, theme) // Сохраняем тему в SharedPreferences
         expanded = false // Закрыть выпадающий список
     }
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
         // Отображение выпадающего списка и текста на экране
         Row(
             modifier = modifier
@@ -175,15 +183,45 @@ fun SettingsScreenContent(context: Context, modifier: Modifier) {
 
 @Composable
 fun SettingsScreenAbout() {
+    val context = LocalContext.current
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Разработано: ",
             style = MaterialTheme.typography.bodyMedium
         )
-        Text(
-            text = "reza--boy (GitHub: https://github.com/reza--boy) и GeorgiiZaharov (GitHub: https://github.com/GeorgiiZaharov)",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
+
+        // Создаем аннотированную строку для кликабельных ссылок
+        val annotatedString = buildAnnotatedString {
+            append("danelloptz (GitHub: ")
+            // Добавляем ссылку
+            pushStringAnnotation(tag = "github1", annotation = "https://github.com/danelloptz")
+            withStyle(style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(color = Color.Blue)) {
+                append("danelloptz")
+            }
+            pop()
+
+            append(") и GeorgiiZaharov (GitHub: ")
+            // Добавляем вторую ссылку
+            pushStringAnnotation(tag = "github2", annotation = "https://github.com/GeorgiiZaharov")
+            withStyle(style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(color = Color.Blue)) {
+                append("GeorgiiZaharov")
+            }
+            pop()
+            append(")")
+        }
+
+        // Используем ClickableText для отображения аннотированного текста
+        ClickableText(
+            text = annotatedString,
+            onClick = { offset ->
+                annotatedString.getStringAnnotations(offset, offset).firstOrNull()?.let { annotation ->
+                    val url = annotation.item
+                    // Открытие ссылки через Intent
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }
+            },
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
