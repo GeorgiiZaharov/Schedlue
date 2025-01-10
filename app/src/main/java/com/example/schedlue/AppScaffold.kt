@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -65,8 +68,7 @@ fun AppScaffold(
                 topBar = { TopBar(title, drawerState, scope, navController) },
                 floatingActionButton = {
                     Button(onClick = {
-                        // Открыть диалог
-                        showDialog.value = true
+                        showDialog.value = true // Открыть диалог
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -125,13 +127,78 @@ fun AppScaffold(
                                     text = { Text(option) },
                                     onClick = {
                                         selectedOption = option
-                                        println("Выбранная опция $selectedOption")
                                         expanded = false
                                     }
                                 )
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    var scheduleFilter by remember { mutableStateOf("") }
+
+//                        var label = if (selectedOption == "Расписание преподавателя") "Введите имя преподавателя" else "Введите номер группы"
+                        if (selectedOption == "Расписание группы") {
+                            OutlinedTextField(
+                                value = scheduleFilter,
+                                onValueChange = { scheduleFilter = it },
+                                label = { Text("Введите номер группы") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        if (selectedOption == "Расписание преподавателя") {
+                            var filteredLecturers by remember { mutableStateOf(listOf<String>()) }
+
+                            // Загрузка списка преподавателей
+
+                            val apiClient = ApiClient()
+                            val lecturersResult = apiClient.getLecturers()
+
+                            lecturersResult.onSuccess { lecturers ->
+                                OutlinedTextField(
+                                    value = scheduleFilter,
+                                    onValueChange = { input ->
+                                        scheduleFilter = input
+                                        // Фильтровать преподавателей
+                                        filteredLecturers = lecturers.filter { lecturer ->
+                                            lecturer.contains(input, ignoreCase = true)
+                                        }
+                                    },
+                                    label = { Text("Введите имя преподавателя") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // подсказки снизу
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(max = 200.dp) // Ограничить высоту списка
+                                ) {
+                                    items(filteredLecturers) { lecturer ->
+                                        Text(
+                                            text = lecturer,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    scheduleFilter = lecturer
+                                                    filteredLecturers = emptyList() // Очистить подсказки после выбора
+                                                }
+                                                .padding(8.dp),
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                }
+                            }.onFailure { error ->
+                                println("Ошибка при получении списка преподавателей: ${error.message}")
+                            }
+                            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 $lecturersResult")
+                        }
+
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -144,6 +211,8 @@ fun AppScaffold(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
+                            // Обработка сохранения
+                            println("Выбранная опция: $selectedOption")
                             showDialog.value = false
                         }) {
                             Text("Сохранить")
@@ -154,3 +223,4 @@ fun AppScaffold(
         }
     }
 }
+
