@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.kapt") // Нужен для всего хорошего против всего плохого
 }
 
 android {
@@ -45,6 +46,18 @@ dependencies {
 
     // Делает красивые значки
     implementation("androidx.compose.material:material-icons-extended:1.4.0")
+
+    // Библиотека Moshi
+    implementation("com.squareup.moshi:moshi:1.15.2")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
+
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
+
+    // KAPT для генерации адаптеров
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+
+    // Основная библиотека OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

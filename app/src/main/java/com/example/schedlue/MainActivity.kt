@@ -11,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -38,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -93,7 +94,8 @@ fun AppScaffold(
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 content = content,
-                topBar = { TopBar(title, drawerState, scope, navController) }
+                topBar = { TopBar(title, drawerState, scope, navController) },
+                floatingActionButton = { Button(onClick = {}){Text("skld")} }
             )
         }
     )
@@ -129,7 +131,6 @@ fun SettingsScreen(navController: NavController) {
         Text(
             text = "Тут будут величайшие настройки",
             color = MaterialTheme.colorScheme.onBackground
-
         )
     }
 }
@@ -139,7 +140,7 @@ fun SettingsScreen(navController: NavController) {
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
     Column {
         TopAppBar(
-            title = { Text("Smth") },
+            title = { Text(title) },
             modifier = Modifier.fillMaxWidth(), // Используем только ширину
             navigationIcon = {
                 Icon(
@@ -173,11 +174,11 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
 @Composable
 fun SlidingPanel(modifier: Modifier) {
     Column (
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text("First option", color = MaterialTheme.colorScheme.onSurface)
-        Text("Second option", color = MaterialTheme.colorScheme.onSurface)
+
     }
 }
