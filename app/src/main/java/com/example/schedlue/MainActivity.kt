@@ -164,7 +164,7 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
         )
         // Горизонтальная полоса
         HorizontalDivider(
-            color = MaterialTheme.colorScheme.onSurface, // Полупрозрачная линия
+            color = MaterialTheme.colorScheme.onSurface,
             thickness = 1.dp // Толщина линии
         )
     }
