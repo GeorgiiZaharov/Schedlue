@@ -9,9 +9,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +21,6 @@ import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -40,7 +41,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -94,8 +98,7 @@ fun AppScaffold(
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 content = content,
-                topBar = { TopBar(title, drawerState, scope, navController) },
-                floatingActionButton = { Button(onClick = {}){Text("skld")} }
+                topBar = { TopBar(title, drawerState, scope, navController) }
             )
         }
     )
@@ -111,12 +114,13 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
     Column {
         TopAppBar(
-            title = { Text(title) },
+            title = { Text("Smth") },
             modifier = Modifier.fillMaxWidth(), // Используем только ширину
             navigationIcon = {
                 Icon(
@@ -147,14 +151,3 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
     }
 }
 
-@Composable
-fun SlidingPanel(modifier: Modifier) {
-    Column (
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-
-    }
-}
