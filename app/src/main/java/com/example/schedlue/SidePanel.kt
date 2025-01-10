@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun SlidingPanel(modifier: Modifier) {
@@ -17,11 +18,11 @@ fun SlidingPanel(modifier: Modifier) {
     ) {
         Box(modifier = Modifier.weight(1f))
         {
-            Text("text", color = MaterialTheme.colorScheme.onSurface)
+            Text("Группы", fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)
         }
         Box(modifier = Modifier.weight(1f))
         {
-            Text("text", color = MaterialTheme.colorScheme.onSurface)
+            Text("Преподаватели", fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
