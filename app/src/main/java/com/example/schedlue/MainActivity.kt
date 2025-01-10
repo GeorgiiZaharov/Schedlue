@@ -127,7 +127,7 @@ fun SettingsScreen(navController: NavController) {
             tint = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "Тут будут настройки",
+            text = "Тут будут величайшие настройки",
             color = MaterialTheme.colorScheme.onBackground
 
         )
