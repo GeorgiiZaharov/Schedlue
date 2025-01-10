@@ -52,12 +52,15 @@ fun getColorScheme(): ColorScheme {
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
     // Проверяем, установлена ли тема в SharedPreferences
-    return if (!isThemeSet(context)) {
+    return if (!isThemeSet(context) || getThemePreference(context) == DEFAULT_THEME) {
         // Если тема не установлена, выбираем систему: светлая или темная
-        if (isDarkTheme) darkColorScheme() else lightColorScheme()
+        if (isDarkTheme) darkColorScheme()
+        else return lightColorScheme()
     } else {
         // Если тема установлена, выбираем из SharedPreferences
-        if (getThemePreference(context) == DARK_THEME) darkColorScheme() else lightColorScheme()
+        if (getThemePreference(context) == DARK_THEME) return darkColorScheme()
+        return lightColorScheme()
+
     }
 }
 
