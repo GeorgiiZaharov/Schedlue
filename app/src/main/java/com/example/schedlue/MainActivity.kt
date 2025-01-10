@@ -52,6 +52,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,8 +70,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val isDarkTheme = isSystemInDarkTheme()
-            val colors = if (isDarkTheme) darkColorScheme() else lightColorScheme() //TODO: add settings theme
+            val colors = getColorScheme()
             MaterialTheme(colorScheme = colors) {
                 AppNavHost()
             }
@@ -109,7 +109,7 @@ fun HomeScreen(navController: NavController) {
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
     Column {
         TopAppBar(
-            title = { Text("Smth") },
+            title = { Text(title) },
             modifier = Modifier.fillMaxWidth(), // Используем только ширину
             navigationIcon = {
                 Icon(
