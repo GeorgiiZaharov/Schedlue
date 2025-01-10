@@ -111,30 +111,6 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun SettingsScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            modifier = Modifier.clickable {
-                navController.popBackStack() // идем туда откуда пришли
-            },
-            imageVector = Icons.Filled.ArrowBackIosNew,
-            contentDescription = "Back button",
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "Тут будут величайшие настройки",
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
