@@ -38,8 +38,7 @@ class ApiClient {
         }
     }
 
-    // Метод для получения списка преподавателей
-    fun getLecturers(): Result<List<String>> {
+    fun getLecturers(): Result<List<Lecturer>> {
         val request = Request.Builder()
             .url("$baseUrl/api/v2/lecturers")
             .build()
@@ -53,10 +52,14 @@ class ApiClient {
                 val body = response.body?.string()
                     ?: return Result.failure(Exception("Пустой ответ от сервера"))
 
+                // Парсим JSON как список строк
                 val lecturers = moshi.adapter(List::class.java).fromJson(body) as? List<String>
                     ?: return Result.failure(Exception("Ошибка парсинга JSON"))
 
-                Result.success(lecturers)
+                // Преобразуем список строк в список объектов Lecturer
+                val lecturerObjects = lecturers.map { Lecturer(name = it) }
+
+                Result.success(lecturerObjects)
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -135,7 +138,7 @@ class ApiClient {
             Result.failure(e)
         }
     }
-
+//    fun getGroupsNumbers():
 }
 
 fun main() {
@@ -151,14 +154,14 @@ fun main() {
         schedule.numerator.forEachIndexed { index, day ->
             println("День $index:")
             day.forEach { lesson ->
-                println("  - ${lesson.date} ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
+                println("  - ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
             }
         }
         println("Denominator:")
         schedule.denominator.forEachIndexed { index, day ->
             println("День $index:")
             day.forEach { lesson ->
-                println("  - ${lesson.date} ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
+                println("  - ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
             }
         }
     }.onFailure { error ->
@@ -186,14 +189,14 @@ fun main() {
         schedule.numerator.forEachIndexed { index, day ->
             println("День $index:")
             day.forEach { lesson ->
-                println("  - ${lesson.date} ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
+                println("  - ${lesson})")
             }
         }
         println("Denominator:")
         schedule.denominator.forEachIndexed { index, day ->
             println("День $index:")
             day.forEach { lesson ->
-                println("  - ${lesson.date} ${lesson.title} (${lesson.startTime} - ${lesson.endTime})")
+                println("  - ${lesson})")
             }
         }
     }.onFailure { error ->

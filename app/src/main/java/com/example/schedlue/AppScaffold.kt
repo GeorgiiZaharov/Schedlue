@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -34,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,142 +84,149 @@ fun AppScaffold(
     )
 
     if (showDialog.value) {
-        Dialog(onDismissRequest = { showDialog.value = false }) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 8.dp
+        ShowNewScheduleDialog(showDialog)
+    }
+}
+
+@Composable
+fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
+    Dialog(
+        onDismissRequest = { showDialog.value = false }
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Добавить расписание",
-                        style = MaterialTheme.typography.titleMedium
+                Text(
+                    text = "Добавить расписание",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                var expanded by remember { mutableStateOf(false) }
+                var selectedOption by remember { mutableStateOf("Выберите опцию") }
+                val options = listOf("Расписание группы", "Расписание преподавателя")
+
+                Box {
+                    OutlinedTextField(
+                        value = selectedOption,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Список") },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = if (expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                                contentDescription = null,
+                                modifier = Modifier.clickable { expanded = !expanded }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    var expanded by remember { mutableStateOf(false) }
-                    var selectedOption by remember { mutableStateOf("Выберите опцию") }
-                    val options = listOf("Расписание группы", "Расписание преподавателя")
-
-                    Box {
-                        OutlinedTextField(
-                            value = selectedOption,
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Список") },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = if (expanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                                    contentDescription = null,
-                                    modifier = Modifier.clickable { expanded = !expanded }
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            options.forEach { option ->
-                                DropdownMenuItem(
-                                    text = { Text(option) },
-                                    onClick = {
-                                        selectedOption = option
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    var scheduleFilter by remember { mutableStateOf("") }
-
-//                        var label = if (selectedOption == "Расписание преподавателя") "Введите имя преподавателя" else "Введите номер группы"
-                        if (selectedOption == "Расписание группы") {
-                            OutlinedTextField(
-                                value = scheduleFilter,
-                                onValueChange = { scheduleFilter = it },
-                                label = { Text("Введите номер группы") },
-                                modifier = Modifier.fillMaxWidth()
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        options.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedOption = option
+                                    expanded = false
+                                }
                             )
                         }
+                    }
+                }
 
-                        if (selectedOption == "Расписание преподавателя") {
-                            var filteredLecturers by remember { mutableStateOf(listOf<String>()) }
+                Spacer(modifier = Modifier.height(16.dp))
 
-                            // Загрузка списка преподавателей
+                var scheduleFilter by remember { mutableStateOf("") }
 
-                            val apiClient = ApiClient()
-                            val lecturersResult = apiClient.getLecturers()
+//                        var label = if (selectedOption == "Расписание преподавателя") "Введите имя преподавателя" else "Введите номер группы"
+                if (selectedOption == "Расписание группы") {
+                    OutlinedTextField(
+                        value = scheduleFilter,
+                        onValueChange = { scheduleFilter = it },
+                        label = { Text("Введите номер группы") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
 
-                            lecturersResult.onSuccess { lecturers ->
-                                OutlinedTextField(
-                                    value = scheduleFilter,
-                                    onValueChange = { input ->
-                                        scheduleFilter = input
-                                        // Фильтровать преподавателей
-                                        filteredLecturers = lecturers.filter { lecturer ->
-                                            lecturer.contains(input, ignoreCase = true)
-                                        }
-                                    },
-                                    label = { Text("Введите имя преподавателя") },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                if (selectedOption == "Расписание преподавателя") {
+//                    var filteredLecturers by remember { mutableStateOf(listOf<String>()) }
+//
+//                    // Загрузка списка преподавателей
+//                    val apiClient = ApiClient()
+//                    val lecturersResult = apiClient.getLecturers()
 
-                                Spacer(modifier = Modifier.height(8.dp))
+//                    lecturersResult.onSuccess { lecturers ->
+                        OutlinedTextField(
+                            value = scheduleFilter,
+                            onValueChange = { input ->
+                                scheduleFilter = input
+//                                // Фильтровать преподавателей
+//                                filteredLecturers = lecturers.filter { lecturer ->
+//                                    lecturer.contains(input, ignoreCase = true)
+//                                }
+                            },
+                            label = { Text("Введите имя преподавателя") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                                // подсказки снизу
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(max = 200.dp) // Ограничить высоту списка
-                                ) {
-                                    items(filteredLecturers) { lecturer ->
-                                        Text(
-                                            text = lecturer,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
-                                                    scheduleFilter = lecturer
-                                                    filteredLecturers = emptyList() // Очистить подсказки после выбора
-                                                }
-                                                .padding(8.dp),
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                }
-                            }.onFailure { error ->
-                                println("Ошибка при получении списка преподавателей: ${error.message}")
-                            }
-                            println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 $lecturersResult")
-                        }
+//                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // подсказки снизу
+//                        LazyColumn(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .heightIn(max = 200.dp) // Ограничить высоту списка
+//                        ) {
+//                            items(filteredLecturers) { lecturer ->
+//                                Text(
+//                                    text = lecturer,
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .clickable {
+//                                            scheduleFilter = lecturer
+//                                            filteredLecturers = emptyList() // Очистить подсказки после выбора
+//                                        }
+//                                        .padding(8.dp),
+//                                    style = MaterialTheme.typography.bodyMedium
+//                                )
+//                            }
+//                        }
+//                    }.onFailure { error ->
+//                        println("Ошибка при получении списка преподавателей: ${error.message}")
+//                    }
+//                    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 $lecturersResult")
+                }
 
 
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Button(onClick = { showDialog.value = false }) {
-                            Text("Закрыть")
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = {
-                            // Обработка сохранения
-                            println("Выбранная опция: $selectedOption")
-                            showDialog.value = false
-                        }) {
-                            Text("Сохранить")
-                        }
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(onClick = { showDialog.value = false }) {
+                        Text("Закрыть")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        // Обработка сохранения
+                        println("Выбранная опция: $selectedOption")
+                        showDialog.value = false
+                    }) {
+                        Text("Сохранить")
                     }
                 }
             }

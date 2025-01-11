@@ -1,12 +1,14 @@
 package com.example.schedlue
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-// Модель для отдельного занятия
 @JsonClass(generateAdapter = true)
+@Entity
 data class Lesson(
-    val date: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val number: String,
     val title: String,
     val classroom: String,
@@ -17,7 +19,6 @@ data class Lesson(
     val type: String
 )
 
-// Модель для расписания недели
 @JsonClass(generateAdapter = true)
 data class WeeklySchedule(
     val numerator: List<List<Lesson>>,
@@ -25,18 +26,24 @@ data class WeeklySchedule(
 )
 
 @JsonClass(generateAdapter = true)
-data class LecturersResponse(
-    val lecturers: List<String>
+@Entity
+data class Lecturer(
+    val name: String
 )
 
-// Модель для получения текущей недели
 @JsonClass(generateAdapter = true)
+data class LecturersResponse(
+    val lecturers: List<String> // JSON приходит как список строк
+)
+
+@JsonClass(generateAdapter = true)
+@Entity
 data class WeekResponse(
     val week: String
 )
 
-// Модель для получения времени последнего обновления
 @JsonClass(generateAdapter = true)
+@Entity
 data class TimeResponse(
     val time: Long
 )

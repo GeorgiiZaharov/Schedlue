@@ -59,6 +59,14 @@ dependencies {
     // Основная библиотека OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
+    // Room
+    implementation("androidx.room:room-runtime:2.5.2")
+    kapt("androidx.room:room-compiler:2.5.2")
+
+    // Room
+    implementation("androidx.room:room-ktx:2.5.2")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
