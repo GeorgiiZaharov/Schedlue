@@ -59,7 +59,6 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
     navController: NavController,
@@ -96,13 +95,16 @@ fun AppScaffold(
     )
 
     if (showDialog.value) {
-        ShowNewScheduleDialog(showDialog)
+        ShowNewScheduleDialog(showDialog, navController)
     }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>) {
+fun ShowNewScheduleDialog(
+    showDialog: MutableState<Boolean>,
+    navController: NavController
+) {
     Dialog(
         onDismissRequest = { showDialog.value = false }
     ) {
@@ -239,8 +241,8 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>) {
                             if (responseRes!!.filter { lecturer -> lecturer.name == scheduleFilter && lecturer.name != "" }.size != 0){
                                 Button(onClick = {
                                     // Обработка сохранения
-                                    println("Выбранная опция: $selectedOption")
                                     showDialog.value = false
+                                    navController.navigate("schedlue")
                                 }) {
                                     Text("Сохранить")
                                 }

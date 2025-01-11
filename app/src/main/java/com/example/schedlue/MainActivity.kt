@@ -81,13 +81,28 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
+    if (isKeyExist(LocalContext.current, "requests"))
+    {
+        NavHost(
+            navController = navController,
+            startDestination = "schedlue" // Начальный экран
+        ) {
+            composable("home") { HomeScreen(navController) }
+            composable("settings") { SettingsScreen(navController) }
+            composable("schedlue") { SchedlueScreen(navController) }
+        }
+    }
+    else {
+        NavHost(
+            navController = navController,
+            startDestination = "home" // Начальный экран
+        ) {
+            composable("home") { HomeScreen(navController) }
+            composable("settings") { SettingsScreen(navController) }
+            composable("schedlue") { SchedlueScreen(navController) }
 
-    NavHost(
-        navController = navController,
-        startDestination = "home" // Начальный экран
-    ) {
-        composable("home") { HomeScreen(navController) }
-        composable("settings") { SettingsScreen(navController) }
+        }
+
     }
 }
 
@@ -97,9 +112,9 @@ fun AppNavHost() {
 fun HomeScreen(navController: NavController) {
     AppScaffold(
         navController,
-        ""
+        "Расписание"
     ) {innerPadding ->
-        Text(text="Home Screen", modifier = Modifier.padding(innerPadding))
+        Text(text="У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)", modifier = Modifier.padding(innerPadding))
     }
 }
 

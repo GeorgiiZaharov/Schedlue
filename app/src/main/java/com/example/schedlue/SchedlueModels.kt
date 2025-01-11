@@ -1,12 +1,10 @@
 package com.example.schedlue
 
-import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-@Entity
 data class Lesson(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val number: String,
@@ -26,7 +24,6 @@ data class WeeklySchedule(
 )
 
 @JsonClass(generateAdapter = true)
-@Entity
 data class Lecturer(
     val name: String
 )
@@ -37,13 +34,17 @@ data class LecturersResponse(
 )
 
 @JsonClass(generateAdapter = true)
-@Entity
+data class Group(
+    val code: String,
+    val name: String
+)
+
+@JsonClass(generateAdapter = true)
 data class WeekResponse(
     val week: String
 )
 
 @JsonClass(generateAdapter = true)
-@Entity
 data class TimeResponse(
     val time: Long
 )

@@ -1,6 +1,8 @@
 package com.example.schedlue
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -138,7 +140,38 @@ class ApiClient {
             Result.failure(e)
         }
     }
-//    fun getGroupsNumbers():
+    fun getGroups(): Result<List<Group>> {
+        val request = Request.Builder()
+            .url("$baseUrl/api/v2/groups")
+            .build()
+
+        return try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    return Result.failure(Exception("Ошибка при выполнении запроса: ${response.code}"))
+                }
+
+                val body = response.body?.string() ?: return Result.failure(Exception("Пустой ответ от сервера"))
+
+                // Создаем адаптер для десериализации Map<String, String>
+                val type = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+                val adapter = moshi.adapter<Map<String, String>>(type)
+                val groupsMap = adapter.fromJson(body)
+
+                if (groupsMap != null) {
+                    // Преобразуем Map в List<Group>
+                    val groupsList = groupsMap.map { entry ->
+                        Group(entry.key, entry.value) // Преобразуем каждый элемент Map в Group
+                    }
+                    Result.success(groupsList) // Возвращаем результат как список объектов Group
+                } else {
+                    Result.failure(Exception("Ошибка парсинга JSON"))
+                }
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
 fun main() {
@@ -220,4 +253,16 @@ fun main() {
     }.onFailure { error ->
         println("Ошибка при получении времени последнего обновления: ${error.message}")
     }
+    // Тестирование получения списка групп
+    println("\nТестирование получения списка групп:")
+    val groupsResult = apiClient.getGroups() // Вызов метода для получения групп
+    groupsResult.onSuccess { groups ->
+        println("Список групп:")
+        groups.forEach { group ->
+            println("  - ${group.name} (${group.code})")
+        }
+    }.onFailure { error ->
+        println("Ошибка при получении списка групп: ${error.message}")
+    }
+
 }
