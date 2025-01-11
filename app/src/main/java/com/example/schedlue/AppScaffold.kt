@@ -1,5 +1,6 @@
 package com.example.schedlue
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -36,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +49,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +97,8 @@ fun AppScaffold(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(InternalCoroutinesApi::class)
 @Composable
 fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
     Dialog(
@@ -161,53 +172,65 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
                 }
 
                 if (selectedOption == "Расписание преподавателя") {
-//                    var filteredLecturers by remember { mutableStateOf(listOf<String>()) }
-//
-//                    // Загрузка списка преподавателей
-//                    val apiClient = ApiClient()
-//                    val lecturersResult = apiClient.getLecturers()
+                    var responseRes: List<Lecturer>? by remember { mutableStateOf(null) }
 
-//                    lecturersResult.onSuccess { lecturers ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val apiService = ApiClient()
+                            val response = apiService.getLecturers()
+                            if (response.isSuccess) {
+                                responseRes = response.getOrNull()
+                            } else {
+                                println("Ошибка сервера: ${response.exceptionOrNull()}")
+                            }
+                        } catch (e: Exception) {
+                            println("Ошибка: ${e.message}")
+                        }
+                    }
+
+                    if (responseRes != null) {
+                        var scheduleFilter by remember { mutableStateOf("") }
+                        var filteredLecturers by remember { mutableStateOf(listOf<Lecturer>()) }
+
                         OutlinedTextField(
                             value = scheduleFilter,
                             onValueChange = { input ->
                                 scheduleFilter = input
-//                                // Фильтровать преподавателей
-//                                filteredLecturers = lecturers.filter { lecturer ->
-//                                    lecturer.contains(input, ignoreCase = true)
-//                                }
+                                filteredLecturers = responseRes!!.filter {
+                                    it.name.contains(input, ignoreCase = true)
+                                }
                             },
                             label = { Text("Введите имя преподавателя") },
                             modifier = Modifier.fillMaxWidth()
                         )
 
-//                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                        // подсказки снизу
-//                        LazyColumn(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .heightIn(max = 200.dp) // Ограничить высоту списка
-//                        ) {
-//                            items(filteredLecturers) { lecturer ->
-//                                Text(
-//                                    text = lecturer,
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .clickable {
-//                                            scheduleFilter = lecturer
-//                                            filteredLecturers = emptyList() // Очистить подсказки после выбора
-//                                        }
-//                                        .padding(8.dp),
-//                                    style = MaterialTheme.typography.bodyMedium
-//                                )
-//                            }
-//                        }
-//                    }.onFailure { error ->
-//                        println("Ошибка при получении списка преподавателей: ${error.message}")
-//                    }
-//                    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 $lecturersResult")
-                }
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 200.dp)
+                        ) {
+                            items(filteredLecturers) { lecturer ->
+                                Text(
+                                    text = lecturer.name,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            filteredLecturers = emptyList()
+                                        }
+                                        .padding(8.dp),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                    }
+                    else {
+                        // TODO NO INTERNET
+                    }
+
+
 
 
 
@@ -232,5 +255,8 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
             }
         }
     }
+}
+
+
 }
 
