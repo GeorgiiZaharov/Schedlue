@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -100,9 +101,8 @@ fun AppScaffold(
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(InternalCoroutinesApi::class)
 @Composable
-fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
+fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>) {
     Dialog(
         onDismissRequest = { showDialog.value = false }
     ) {
@@ -162,7 +162,6 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
 
                 var scheduleFilter by remember { mutableStateOf("") }
 
-//                        var label = if (selectedOption == "Расписание преподавателя") "Введите имя преподавателя" else "Введите номер группы"
                 if (selectedOption == "Расписание группы") {
                     OutlinedTextField(
                         value = scheduleFilter,
@@ -197,10 +196,9 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
                         OutlinedTextField(
                             value = scheduleFilter,
                             onValueChange = { input ->
-
                                 scheduleFilter = input
                                 filteredLecturers = responseRes!!.filter {
-                                    it.name.contains(input, ignoreCase = true)
+                                    it.name.contains(input, ignoreCase = true) && input != ""
                                 }
                             },
                             label = { Text("Введите имя преподавателя") },
@@ -220,6 +218,7 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            scheduleFilter = lecturer.name
                                             filteredLecturers = emptyList()
                                         }
                                         .padding(8.dp),
@@ -227,39 +226,33 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
 
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(onClick = { showDialog.value = false }) {
+                                Text("Закрыть")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            if (responseRes!!.filter { lecturer -> lecturer.name == scheduleFilter && lecturer.name != "" }.size != 0){
+                                Button(onClick = {
+                                    // Обработка сохранения
+                                    println("Выбранная опция: $selectedOption")
+                                    showDialog.value = false
+                                }) {
+                                    Text("Сохранить")
+                                }
+                            }
+                        }
+                    } else {
+                        Text("Нет интернет соединения")
                     }
-                    else {
-                        // TODO NO INTERNET
-                    }
 
-
-
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(onClick = { showDialog.value = false }) {
-                        Text("Закрыть")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {
-                        // Обработка сохранения
-                        println("Выбранная опция: $selectedOption")
-                        showDialog.value = false
-                    }) {
-                        Text("Сохранить")
-                    }
                 }
             }
         }
     }
-}
-
-
 }
 
