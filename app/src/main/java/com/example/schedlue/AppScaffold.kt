@@ -165,13 +165,83 @@ fun ShowNewScheduleDialog(
                 var scheduleFilter by remember { mutableStateOf("") }
 
                 if (selectedOption == "Расписание группы") {
-                    OutlinedTextField(
-                        value = scheduleFilter,
-                        onValueChange = { scheduleFilter = it },
-                        label = { Text("Введите номер группы") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
+                    var responseRes: List<Group>? by remember { mutableStateOf(null) }
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val apiService = ApiClient()
+                            val response = apiService.getGroups()
+                            if (response.isSuccess) {
+                                responseRes = response.getOrNull()
+                            } else {
+                                println("Ошибка сервера: ${response.exceptionOrNull()}")
+                            }
+                        } catch (e: Exception) {
+                            println("Ошибка: ${e.message}")
+                        }
+                    }
+
+                    if (responseRes != null) {
+                        var scheduleFilter by remember { mutableStateOf("") }
+                        var filteredGroups by remember { mutableStateOf(listOf<Group>()) }
+
+                        OutlinedTextField(
+                            value = scheduleFilter,
+                            onValueChange = { input ->
+                                scheduleFilter = input
+                                filteredGroups = responseRes!!.filter {
+                                    (it.name.contains(input, ignoreCase = true) || it.code.contains(input, ignoreCase = true)) && input != ""
+                                }
+                            },
+                            label = { Text("Введите номер группы") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 200.dp)
+                        ) {
+                            items(filteredGroups) { group ->
+                                Text(
+                                    text = "${group.code} ${group.name}",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            scheduleFilter = "${group.code} ${group.name}"
+                                            filteredGroups = emptyList()
+                                        }
+                                        .padding(8.dp),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(onClick = { showDialog.value = false }) {
+                                Text("Закрыть")
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            if (responseRes!!.filter { group -> "${group.code} ${group.name}" == scheduleFilter && "${group.code} ${group.name}" != "" }.size != 0){
+                                Button(onClick = {
+                                    showDialog.value = false
+                                    navController.navigate("schedlue")
+                                }) {
+                                    Text("Сохранить")
+                                }
+                            }
+                        }
+                    } else {
+                        Text("Нет интернет соединения")
+                    }
+
                 }
 
                 if (selectedOption == "Расписание преподавателя") {

@@ -1,4 +1,4 @@
-package com.example.schedlue
+    package com.example.schedlue
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
