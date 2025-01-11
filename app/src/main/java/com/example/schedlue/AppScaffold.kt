@@ -232,8 +232,10 @@ fun ShowNewScheduleDialog(
                             Spacer(modifier = Modifier.width(8.dp))
 
                             if (responseRes!!.filter { group -> "${group.code} ${group.name}" == scheduleFilter && "${group.code} ${group.name}" != "" }.size != 0){
+                                val context = LocalContext.current
                                 Button(onClick = {
                                     showDialog.value = false
+                                    saveGroup(scheduleFilter, context)
                                     navController.navigate("schedlue")
                                 }) {
                                     Text("Сохранить")
@@ -333,8 +335,14 @@ fun ShowNewScheduleDialog(
 }
 
 fun saveLecturer(name: String, context: Context){
-    val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
-    set.plus(name)
+    var set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
+    set = set.plus(name)
     saveSetToPrefs(context, LECTURERS_SCHEDLUE, set)
     saveStingToPrefs(context, LAST_SCHEDLUE, name)
+}
+fun saveGroup(groupName: String, context: Context){
+    var set = getSetFromPrefs(context, GROUPS_SCEDLUE)
+    set = set.plus(groupName)
+    saveSetToPrefs(context, GROUPS_SCEDLUE, set)
+    saveStingToPrefs(context, LAST_SCHEDLUE, groupName)
 }

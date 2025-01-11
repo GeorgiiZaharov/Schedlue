@@ -1,12 +1,19 @@
 package com.example.schedlue
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 val LAST_SCHEDLUE = "last_schedlue"
 val GROUPS_SCEDLUE = "groups_schedlue"
@@ -42,12 +49,27 @@ fun saveStingToPrefs(context: Context, key: String, value: String) {
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SchedlueScreen(navController: NavController){
-    AppScaffold(
-        navController,
-        "Расписание"
-    ) { paddingValue ->
-
-    }
+//    AppScaffold(
+//        navController,
+//        "Расписание"
+//    ) { paddingValue ->
+//        val responseRes by remember { mutableStateOf() }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            try {
+//                val apiService = ApiClient()
+//                val response = apiService.getGroups()
+//                if (response.isSuccess) {
+//                    responseRes = response.getOrNull()
+//                } else {
+//                    println("Ошибка сервера: ${response.exceptionOrNull()}")
+//                }
+//            } catch (e: Exception) {
+//                println("Ошибка: ${e.message}")
+//            }
+//        }
+//
+//    }
 }

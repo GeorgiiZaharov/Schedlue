@@ -25,8 +25,13 @@ fun SlidingPanel(modifier: Modifier) {
         {
             Text("Преподаватели", fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)
             val context = LocalContext.current
-            val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
-            println("$set ((((")
+            var set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
+            set = set.plus("Иванов Иван")
+            set = set.plus("Димитров Вячеслав Михайлович")
+            saveSetToPrefs(context, LECTURERS_SCHEDLUE, set)
+            println(set+"!!!!!!!!!!!!!!!!!!!!!!!!!")
+
         }
     }
+
 }
