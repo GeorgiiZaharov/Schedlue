@@ -336,4 +336,5 @@ fun saveLecturer(name: String, context: Context){
     val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
     set.plus(name)
     saveSetToPrefs(context, LECTURERS_SCHEDLUE, set)
+    saveStingToPrefs(context, LAST_SCHEDLUE, name)
 }

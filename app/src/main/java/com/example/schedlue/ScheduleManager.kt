@@ -42,11 +42,12 @@ fun saveStingToPrefs(context: Context, key: String, value: String) {
 }
 
 
-    @Composable
+@Composable
 fun SchedlueScreen(navController: NavController){
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text("some text")
+    AppScaffold(
+        navController,
+        "Расписание"
+    ) { paddingValue ->
+
     }
 }
