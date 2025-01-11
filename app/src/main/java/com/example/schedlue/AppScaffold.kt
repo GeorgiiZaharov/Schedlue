@@ -1,6 +1,7 @@
 package com.example.schedlue
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -299,7 +301,6 @@ fun ShowNewScheduleDialog(
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
@@ -308,10 +309,13 @@ fun ShowNewScheduleDialog(
                                 Text("Закрыть")
                             }
                             Spacer(modifier = Modifier.width(8.dp))
+
                             if (responseRes!!.filter { lecturer -> lecturer.name == scheduleFilter && lecturer.name != "" }.size != 0){
+                                val context = LocalContext.current
                                 Button(onClick = {
                                     // Обработка сохранения
                                     showDialog.value = false
+                                    saveLecturer(scheduleFilter, context)
                                     navController.navigate("schedlue")
                                 }) {
                                     Text("Сохранить")
@@ -328,3 +332,8 @@ fun ShowNewScheduleDialog(
     }
 }
 
+fun saveLecturer(name: String, context: Context){
+    val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
+    set.plus(name)
+    saveSetToPrefs(context, LECTURERS_SCHEDLUE, set)
+}
