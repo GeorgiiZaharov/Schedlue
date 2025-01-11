@@ -2,8 +2,10 @@ package com.example.schedlue
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,11 +30,15 @@ fun SlidingPanel(modifier: Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 val context = LocalContext.current
-                var set = getSetFromPrefs(context, GROUPS_SCEDLUE)
-                set = set.plus("22207 Программная инженерия")
-                saveSetToPrefs(context, GROUPS_SCEDLUE, set)
+                val set = getSetFromPrefs(context, GROUPS_SCEDLUE)
                 set.forEach { lecturer ->
-                    Text(lecturer, fontSize = 17.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Row (modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            lecturer,
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         }
@@ -44,7 +50,7 @@ fun SlidingPanel(modifier: Modifier) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 val context = LocalContext.current
-                var set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
+                val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
                 set.forEach { lecturer ->
                     Text(lecturer, fontSize = 17.sp, color = MaterialTheme.colorScheme.onSurface)
                 }

@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
-    if (isKeyExist(LocalContext.current, "requests"))
+    if (isKeyExist(LocalContext.current, LAST_SCHEDLUE))
     {
         NavHost(
             navController = navController,
