@@ -46,6 +46,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
@@ -195,6 +197,7 @@ fun ShowNewScheduleDialog(showDialog: MutableState<Boolean>){
                         OutlinedTextField(
                             value = scheduleFilter,
                             onValueChange = { input ->
+
                                 scheduleFilter = input
                                 filteredLecturers = responseRes!!.filter {
                                     it.name.contains(input, ignoreCase = true)
