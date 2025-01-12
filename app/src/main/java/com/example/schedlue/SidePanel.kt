@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,6 +37,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, isPanelVisibl
     ) {
         // Затемнение фона, если панель активна
         if (isPanelVisible) {
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -50,7 +53,11 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, isPanelVisibl
                 .align(Alignment.BottomCenter),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(modifier =  Modifier.weight(1f)) {
+            Box(
+                modifier =  Modifier
+                    .weight(1f)
+                    .padding(start = 10.dp, end = 50.dp)
+            ) {
                 // Группы
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -93,7 +100,11 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, isPanelVisibl
                 }
             }
 
-            Box(modifier =  Modifier.weight(1f)) {
+            Box(
+                modifier =  Modifier
+                    .weight(1f)
+                    .padding(start = 10.dp, end = 50.dp)
+            ) {
                 // Преподаватели
                 Column(
                     modifier = Modifier.fillMaxSize(),
