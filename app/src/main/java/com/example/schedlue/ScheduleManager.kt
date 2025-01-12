@@ -234,7 +234,7 @@ fun InternetConnectionAllert(){
 @Composable
 fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
     // получаем текущую неделю (числитель/знаминатель)
-    var schedlue: List<List<Lesson>> = emptyList()
+    var schedlue: List<List<Lesson>>
 
     val responseRes = fetchData { ApiClient().getCurrentWeek() }
     when (responseRes) {

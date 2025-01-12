@@ -168,20 +168,7 @@ fun ShowNewScheduleDialog(
 
                 if (selectedOption == "Расписание группы") {
                     var responseRes: List<Group>? by remember { mutableStateOf(null) }
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val apiService = ApiClient()
-                            val response = apiService.getGroups()
-                            if (response.isSuccess) {
-                                responseRes = response.getOrNull()
-                            } else {
-                                println("Ошибка сервера: ${response.exceptionOrNull()}")
-                            }
-                        } catch (e: Exception) {
-                            println("Ошибка: ${e.message}")
-                        }
-                    }
+                    responseRes = fetchData { ApiClient().getGroups() }
 
                     if (responseRes != null) {
                         var scheduleFilter by remember { mutableStateOf("") }
@@ -250,20 +237,7 @@ fun ShowNewScheduleDialog(
 
                 if (selectedOption == "Расписание преподавателя") {
                     var responseRes: List<Lecturer>? by remember { mutableStateOf(null) }
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val apiService = ApiClient()
-                            val response = apiService.getLecturers()
-                            if (response.isSuccess) {
-                                responseRes = response.getOrNull()
-                            } else {
-                                println("Ошибка сервера: ${response.exceptionOrNull()}")
-                            }
-                        } catch (e: Exception) {
-                            println("Ошибка: ${e.message}")
-                        }
-                    }
+                    responseRes = fetchData { ApiClient().getLecturers() }
 
                     if (responseRes != null) {
                         var scheduleFilter by remember { mutableStateOf("") }
