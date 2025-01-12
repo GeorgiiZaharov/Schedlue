@@ -72,10 +72,17 @@ fun AppScaffold(
 
     val showDialog = remember { mutableStateOf(false) }
 
+    // Добавляем флаг для определения, открыта панель или нет
+    val isPanelVisible = drawerState.isOpen
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            SlidingPanel(Modifier.statusBarsPadding(), navController)
+            SlidingPanel(
+                modifier = Modifier.statusBarsPadding(),
+                navController = navController,
+                isPanelVisible = isPanelVisible // Передаём состояние панели
+            )
         },
         content = {
             Scaffold(
@@ -100,6 +107,7 @@ fun AppScaffold(
         ShowNewScheduleDialog(showDialog, navController)
     }
 }
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
