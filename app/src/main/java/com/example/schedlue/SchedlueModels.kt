@@ -6,7 +6,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Lesson(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val number: String,
     val title: String,
     val classroom: String,
