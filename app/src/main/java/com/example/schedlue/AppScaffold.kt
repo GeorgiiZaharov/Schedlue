@@ -182,7 +182,6 @@ fun ShowNewScheduleDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                var scheduleFilter by remember { mutableStateOf("") }
 
                 if (selectedOption == "Расписание группы") {
                     var responseRes: List<Group>? by remember { mutableStateOf(null) }
