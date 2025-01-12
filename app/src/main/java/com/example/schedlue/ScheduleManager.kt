@@ -257,8 +257,8 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
 
     Column (
         modifier = Modifier
-            .fillMaxSize()
-            .padding(0.dp, 50.dp),//TODO bad practice
+            .fillMaxSize(),
+//            .padding(0.dp, 50.dp),//TODO bad practice
         verticalArrangement = Arrangement.SpaceBetween
     ){
         // информация обо дне
@@ -288,11 +288,26 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
         }
 
         // Расписание
-        LazyColumn {
-            // Отображаем элементы списка
-            items(schedlue[(todayIndex + dayBias + 14 * 10000) % 14]) { lesson ->
-                println("lesson $lesson")
-                LessonCard(lesson)
+        if (!schedlue[(todayIndex + dayBias + 14 * 10000) % 14].isEmpty()){
+            LazyColumn {
+                // Отображаем элементы списка
+                items(schedlue[(todayIndex + dayBias + 14 * 10000) % 14]) { lesson ->
+                    println("lesson $lesson")
+                    LessonCard(lesson)
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+            }
+        }
+        else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    "В этот день нет пар \uD83E\uDD73",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
 

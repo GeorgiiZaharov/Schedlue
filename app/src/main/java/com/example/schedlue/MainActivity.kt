@@ -81,8 +81,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
-    if (isKeyExist(LocalContext.current, LAST_SCHEDLUE))
-    {
+    if (isKeyExist(LocalContext.current, LAST_SCHEDLUE)) {
         NavHost(
             navController = navController,
             startDestination = "schedlue" // Начальный экран
@@ -91,8 +90,7 @@ fun AppNavHost() {
             composable("settings") { SettingsScreen(navController) }
             composable("schedlue") { SchedlueScreen(navController) }
         }
-    }
-    else {
+    } else {
         NavHost(
             navController = navController,
             startDestination = "home" // Начальный экран
@@ -107,14 +105,16 @@ fun AppNavHost() {
 }
 
 
-
 @Composable
 fun HomeScreen(navController: NavController) {
     AppScaffold(
         navController,
         "Расписание"
-    ) {innerPadding ->
-        Text(text="У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)", modifier = Modifier.padding(innerPadding))
+    ) { innerPadding ->
+        Text(
+            text = "У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)",
+            modifier = Modifier.padding(innerPadding)
+        )
     }
 }
 
