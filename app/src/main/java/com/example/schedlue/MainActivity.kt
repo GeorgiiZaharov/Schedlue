@@ -98,9 +98,7 @@ fun AppNavHost() {
             composable("home") { HomeScreen(navController) }
             composable("settings") { SettingsScreen(navController) }
             composable("schedlue") { SchedlueScreen(navController) }
-
         }
-
     }
 }
 
@@ -111,10 +109,17 @@ fun HomeScreen(navController: NavController) {
         navController,
         "Расписание"
     ) { innerPadding ->
-        Text(
-            text = "У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)",
-            modifier = Modifier.padding(innerPadding)
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(10.dp, 0.dp),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                text = "У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)"
+            )
+        }
     }
 }
 

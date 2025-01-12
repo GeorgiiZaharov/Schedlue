@@ -99,6 +99,13 @@ fun saveStingToPrefs(context: Context, key: String, value: String) {
     editor.apply()
 }
 
+fun deleteVariable(context: Context, key: String){
+    val sharedPreferences = context.getSharedPreferences("shedlue_data", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.remove(key) // Удаляем ключ key
+    editor.apply() // Применяем изменения
+}
+
 @Composable
 fun <T> fetchData(
     apiCall: suspend () -> Result<T>
@@ -136,6 +143,8 @@ fun SchedlueScreen(navController: NavController){
 
         // Если последнее расписание из списка запросов расписаний групп, значит показываем расписание группы
         val groups_schedlue_set = getSetFromPrefs(LocalContext.current, GROUPS_SCEDLUE)
+        val lecturers_schedlue_set = getSetFromPrefs(LocalContext.current, LECTURERS_SCHEDLUE)
+
         if (groups_schedlue_set.contains(last_schedlue))
         {
             responseRes = fetchData {
@@ -143,11 +152,18 @@ fun SchedlueScreen(navController: NavController){
                 apiClient.getWeeklySchedule(last_schedlue.split(" ").first())
             }
         }
-        else {
+        else if (lecturers_schedlue_set.contains(last_schedlue)) {
             responseRes = fetchData {
                 val apiClient = ApiClient()
                 apiClient.getLecturerSchedule(last_schedlue)
             }
+        }
+        else {
+            deleteVariable(LocalContext.current, LAST_SCHEDLUE)
+            navController.navigate("home") {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            }
+            return@AppScaffold
         }
 
         if (responseRes != null) {

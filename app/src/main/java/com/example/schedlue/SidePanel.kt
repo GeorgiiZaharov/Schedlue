@@ -1,5 +1,6 @@
 package com.example.schedlue
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,112 +29,162 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun SlidingPanel(modifier: Modifier, navController: NavController, isPanelVisible: Boolean) {
+fun SlidingPanel(modifier: Modifier, navController: NavController, state: DrawerState) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        val context = LocalContext.current
+        val last_schedlue by remember { mutableStateOf(getStringFromPrefs(context, LAST_SCHEDLUE)) }
+
+        val scope = rememberCoroutineScope()
         // Затемнение фона, если панель активна
-        if (isPanelVisible) {
+        if (state.isOpen) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.8f))
-                    .clickable(onClick = { navController.navigate("schedlue") })
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+                    .clickable(
+                        onClick = {
+                            scope.launch {
+                                if (state.isOpen) state.close() else state.open()
+                            }
+                        }
+                    )
             )
-        }
 
-        // Содержимое панели
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .align(Alignment.BottomCenter),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Box(modifier =  Modifier.weight(1f)) {
-                // Группы
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                )  {
-                    Text("Группы", fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)
 
-                    Spacer(modifier = Modifier.height(16.dp))
+            // Содержимое панели
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    // Группы
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Группы",
+                            fontSize = 24.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
 
-                    val context = LocalContext.current
-                    val set = remember {mutableStateOf(getSetFromPrefs(context, GROUPS_SCEDLUE).toMutableList())}
-                    set.value.forEach { group ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                group,
-                                fontSize = 17.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                        saveStingToPrefs(context, LAST_SCHEDLUE, group)
-                                        navController.navigate("schedlue")
-                                    }
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        val set = remember {
+                            mutableStateOf(
+                                getSetFromPrefs(
+                                    context,
+                                    GROUPS_SCEDLUE
+                                ).toMutableList()
                             )
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete",
-                                tint = Color.Gray,
-                                modifier = Modifier
-                                    .clickable {
-                                        set.value = set.value.toMutableList().apply { remove(group) }
-                                        saveSetToPrefs(context, GROUPS_SCEDLUE, set.value.toSet())
-                                    }
-                            )
+                        }
+                        set.value.forEach { group ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    group,
+                                    fontSize = 17.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            saveStingToPrefs(context, LAST_SCHEDLUE, group)
+                                            navController.navigate("schedlue")
+                                        }
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.Gray,
+                                    modifier = Modifier
+                                        .clickable {
+                                            if (group == last_schedlue) {
+                                                deleteVariable(context, LAST_SCHEDLUE)
+                                            }
+                                            set.value =
+                                                set.value.toMutableList().apply { remove(group) }
+                                            saveSetToPrefs(
+                                                context,
+                                                GROUPS_SCEDLUE,
+                                                set.value.toSet()
+                                            )
+                                        }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Box(modifier =  Modifier.weight(1f)) {
-                // Преподаватели
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                )    {
-                    Text("Преподаватели", fontSize = 24.sp, color = MaterialTheme.colorScheme.onSurface)
+                Box(modifier = Modifier.weight(1f)) {
+                    // Преподаватели
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Преподаватели",
+                            fontSize = 24.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    val context = LocalContext.current
-                    val set = remember {mutableStateOf(getSetFromPrefs(context, LECTURERS_SCHEDLUE).toMutableList())}
-                    set.value.forEach { lecturer ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                lecturer,
-                                fontSize = 17.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                    saveStingToPrefs(context, LAST_SCHEDLUE, lecturer)
-                                    navController.navigate("schedlue")
-                                }
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete",
-                                tint = Color.Gray,
-                                modifier = Modifier
-                                    .clickable {
-                                        set.value = set.value.toMutableList().apply { remove(lecturer) }
-                                        saveSetToPrefs(context, LECTURERS_SCHEDLUE, set.value.toSet())
-                                    }
+                        val set = remember {
+                            mutableStateOf(
+                                getSetFromPrefs(
+                                    context,
+                                    LECTURERS_SCHEDLUE
+                                ).toMutableList()
                             )
                         }
+                        set.value.forEach { lecturer ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    lecturer,
+                                    fontSize = 17.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            saveStingToPrefs(context, LAST_SCHEDLUE, lecturer)
+                                            navController.navigate("schedlue")
+                                        }
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.Gray,
+                                    modifier = Modifier
+                                        .clickable {
+                                            if (lecturer == last_schedlue) {
+                                                deleteVariable(context, LAST_SCHEDLUE)
+                                            }
 
+                                            set.value =
+                                                set.value.toMutableList().apply { remove(lecturer) }
+                                            saveSetToPrefs(
+                                                context,
+                                                LECTURERS_SCHEDLUE,
+                                                set.value.toSet()
+                                            )
+                                        }
+                                )
+                            }
+
+                        }
                     }
                 }
             }
