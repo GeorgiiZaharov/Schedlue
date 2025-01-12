@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -149,10 +151,10 @@ fun SchedlueScreen(navController: NavController){
         }
 
         if (responseRes != null) {
-            Box(modifier = Modifier.padding(paddingValue))
-            {
-                SchedlueScreenSchedlue(responseRes!!)
-            }
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValue))
+            SchedlueScreenSchedlue(responseRes!!, paddingValue)
         }
         else {
             InternetConnectionAllert()
@@ -232,7 +234,10 @@ fun InternetConnectionAllert(){
 
 
 @Composable
-fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
+fun SchedlueScreenSchedlue(
+    schedule_response: WeeklySchedule,
+    paddingValue: PaddingValues
+){
     // получаем текущую неделю (числитель/знаминатель)
     var schedlue: List<List<Lesson>>
 
@@ -258,13 +263,16 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp, 50.dp),//TODO bad practice
+            .padding(paddingValue),
         verticalArrangement = Arrangement.SpaceBetween
     ){
-        // информация обо дне
+        // информация о дне
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(0.dp, 15.dp)
+            ,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             // Состояние недели (числитель / знаминатлеь)
@@ -288,19 +296,41 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
         }
 
         // Расписание
-        LazyColumn {
-            // Отображаем элементы списка
-            items(schedlue[(todayIndex + dayBias + 14 * 10000) % 14]) { lesson ->
-                println("lesson $lesson")
-                LessonCard(lesson)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(4f)
+        ){
+            if (!schedlue[(todayIndex + dayBias + 14 * 10000) % 14].isEmpty()){
+                LazyColumn {
+                    // Отображаем элементы списка
+                    items(schedlue[(todayIndex + dayBias + 14 * 10000) % 14]) { lesson ->
+                        println("lesson $lesson")
+                        LessonCard(lesson)
+                        Spacer(modifier = Modifier.height(5.dp))
+                    }
+                }
+            }
+            else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(
+                        "В этот день нет пар \uD83E\uDD73",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
 
         // Кнопки
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .fillMaxSize()
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
             Icon(
@@ -334,63 +364,86 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
 fun LessonCard(
     lesson: Lesson
 ){
-    Column (
+    var isDialogOpen by remember { mutableStateOf(false) }
+    if (isDialogOpen) {
+        LessonCardInfo(lesson, {isDialogOpen = false})
+    }
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
                 color = LocalContentColor.current
-            ),
-        verticalArrangement = Arrangement.SpaceAround,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Row(
+            )
+            .clickable {isDialogOpen = true},
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // номер лекции
+        Box(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .weight(1f)
+                .border(
+                    width = 1.dp,
+                    color = LocalContentColor.current
+                ),
+            contentAlignment = Alignment.Center
         ){
             Text(lesson.number)
+        }
+        // информация о лекции
+        Column (
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(9f)
+                .padding(10.dp, 0.dp)
+        ){
+            Spacer(modifier = Modifier.height(7.dp))
+
             Text(lesson.title)
+            Spacer(modifier = Modifier.height(14.dp))
 
-            var isDialogOpen by remember { mutableStateOf(false) }
-            Button(
-                onClick = {
-                    isDialogOpen = true
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
             ){
-                Text("i")
+                Icon(
+                    imageVector = Icons.Filled.Group,
+                    contentDescription = "Group Icon"
+                )
+                Text(lesson.group)
             }
-            if (isDialogOpen) {
-                LessonCardInfo(lesson, {isDialogOpen = false})
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ){
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = "Location Icon"
+                )
+                Text(lesson.classroom)
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ){
-            Icon(
-                imageVector = Icons.Filled.Group,
-                contentDescription = "Group Icon"
-            )
-            Text(lesson.group)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = "Время",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "${lesson.startTime} - ${lesson.endTime}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            Spacer(modifier = Modifier.height(14.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ){
-            Icon(
-                imageVector = Icons.Filled.LocationOn,
-                contentDescription = "Location Icon"
-            )
-            Text(lesson.classroom)
         }
-        Spacer(modifier = Modifier.height(16.dp))
-
     }
 }
 
