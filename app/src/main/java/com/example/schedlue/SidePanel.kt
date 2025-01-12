@@ -1,5 +1,6 @@
 package com.example.schedlue
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,9 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun SlidingPanel(modifier: Modifier) {
+fun SlidingPanel(modifier: Modifier, navController: NavController) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -31,12 +33,16 @@ fun SlidingPanel(modifier: Modifier) {
 
                 val context = LocalContext.current
                 val set = getSetFromPrefs(context, GROUPS_SCEDLUE)
-                set.forEach { lecturer ->
+                set.forEach { group ->
                     Row (modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            lecturer,
+                            group,
                             fontSize = 17.sp,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.clickable {
+                                saveStingToPrefs(context, LAST_SCHEDLUE, group)
+                                navController.navigate("schedlue")
+                            }
                         )
                     }
                 }
@@ -52,7 +58,14 @@ fun SlidingPanel(modifier: Modifier) {
                 val context = LocalContext.current
                 val set = getSetFromPrefs(context, LECTURERS_SCHEDLUE)
                 set.forEach { lecturer ->
-                    Text(lecturer, fontSize = 17.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text(
+                        lecturer,
+                        fontSize = 17.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.clickable {
+                            saveStingToPrefs(context, LAST_SCHEDLUE, lecturer)
+                            navController.navigate("schedlue")
+                    })
                 }
             }
 

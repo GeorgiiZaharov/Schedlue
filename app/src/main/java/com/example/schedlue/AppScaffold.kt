@@ -75,7 +75,7 @@ fun AppScaffold(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            SlidingPanel(Modifier.statusBarsPadding())
+            SlidingPanel(Modifier.statusBarsPadding(), navController)
         },
         content = {
             Scaffold(
