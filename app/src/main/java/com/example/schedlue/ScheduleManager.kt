@@ -334,13 +334,19 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
 fun LessonCard(
     lesson: Lesson
 ){
+    var isDialogOpen by remember { mutableStateOf(false) }
+    if (isDialogOpen) {
+        LessonCardInfo(lesson, {isDialogOpen = false})
+    }
+
     Column (
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
                 color = LocalContentColor.current
-            ),
+            )
+            .clickable {isDialogOpen = true},
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -352,18 +358,6 @@ fun LessonCard(
         ){
             Text(lesson.number)
             Text(lesson.title)
-
-            var isDialogOpen by remember { mutableStateOf(false) }
-            Button(
-                onClick = {
-                    isDialogOpen = true
-                }
-            ){
-                Text("i")
-            }
-            if (isDialogOpen) {
-                LessonCardInfo(lesson, {isDialogOpen = false})
-            }
         }
         Row(
             modifier = Modifier
