@@ -261,24 +261,31 @@ fun SchedlueScreenSchedlue(schedule_response: WeeklySchedule){
             .padding(0.dp, 50.dp),//TODO bad practice
         verticalArrangement = Arrangement.SpaceBetween
     ){
-        // Состояние недели (числитель / знаминатлеь)
-        if (((todayIndex + dayBias + 14 * 10000) % 14) in 0..6) {
-            if (isNumerator) Text("Числитель")
-            else Text("Знаминатель")
-        }
-        else {
-            if (!isNumerator) Text("Числитель")
-            else Text("Знаминатель")
-        }
+        // информация обо дне
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            // Состояние недели (числитель / знаминатлеь)
+            if (((todayIndex + dayBias + 14 * 10000) % 14) in 0..6) {
+                if (isNumerator) Text("Числитель")
+                else Text("Знаминатель")
+            }
+            else {
+                if (!isNumerator) Text("Числитель")
+                else Text("Знаминатель")
+            }
 
-        // Дата активного дня
-        var currentDay = LocalDate.now().plusDays(dayBias.toLong())
-        var formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale("ru", "RU"))
-        var currentDayFormated = currentDay.format(formatter).split(" ")
-        var currentDayName = currentDayFormated[0]
-        var currentDayNumber = currentDayFormated[1] + " " + currentDayFormated[2]
-        Text(currentDayName)
-        Text(currentDayNumber)
+            // Дата активного дня
+            var currentDay = LocalDate.now().plusDays(dayBias.toLong())
+            var formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale("ru", "RU"))
+            var currentDayFormated = currentDay.format(formatter).split(" ")
+            var currentDayName = currentDayFormated[0]
+            var currentDayNumber = currentDayFormated[1] + " " + currentDayFormated[2]
+            Text(currentDayName)
+            Text(currentDayNumber)
+        }
 
         // Расписание
         LazyColumn {
