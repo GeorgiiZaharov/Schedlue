@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -371,7 +372,7 @@ fun SchedlueScreenSchedlue(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(1f),
+                .weight(0.5f),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -421,12 +422,13 @@ fun LessonCard(
         // номер лекции
         Box(
             modifier = Modifier
-                .fillMaxSize()
                 .weight(1f)
+                .fillMaxSize()
                 .border(
                     width = 1.dp,
                     color = LocalContentColor.current
-                ),
+                )
+                .align(Alignment.Top),
             contentAlignment = Alignment.Center
         ){
             Text(lesson.number)
