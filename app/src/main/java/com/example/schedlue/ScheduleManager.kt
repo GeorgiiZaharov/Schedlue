@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -54,7 +55,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.squareup.moshi.Json
@@ -269,6 +274,17 @@ fun InternetConnectionAllert(){
     }
 }
 
+fun getCurrentWeekDays(shift: Int): List<String> {
+    val today = LocalDate.now()
+    val startOfWeek = today.with(DayOfWeek.MONDAY).plusWeeks(shift.toLong()) // Сдвигаем начало недели на shift недель
+    val daysOfWeek = mutableListOf<String>()
+    val formatter = DateTimeFormatter.ofPattern("d")
+
+    for (i in 0..6) {
+        daysOfWeek.add(startOfWeek.plusDays(i.toLong()).format(formatter))
+    }
+    return daysOfWeek
+}
 
 @Composable
 fun SchedlueScreenSchedlue(
@@ -300,7 +316,22 @@ fun SchedlueScreenSchedlue(
 
     var isNumerator by remember { mutableStateOf(responseRes == "numerator") }
     var dayBias by remember { mutableStateOf(0) }
+    var activeDayIndex by remember { mutableStateOf(0) }
     var todayIndex = LocalDate.now().dayOfWeek.ordinal
+
+    val daysNames = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+    var shift = if (dayBias >= 0) dayBias / 7 else (abs(dayBias + 1) / 7 + 1) * -1
+
+    var daysNumbers = getCurrentWeekDays(shift)
+
+    // Дата активного дня
+    val today = LocalDate.now().dayOfMonth
+    var currentDay = LocalDate.now().plusDays(dayBias.toLong())
+    var formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale("ru", "RU"))
+    var currentDayFormated = currentDay.format(formatter).split(" ")
+    var currentDayName = currentDayFormated[0]
+    var currentDayNumber = currentDayFormated[1] + " " + currentDayFormated[2]
+    var currentDayNumberOnly = currentDayFormated[1]
 
     Column (
         modifier = Modifier
@@ -317,22 +348,98 @@ fun SchedlueScreenSchedlue(
             ,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val buttonModifier = Modifier
+                    .weight(1f)
+                    .padding(5.dp)
+
+                val buttonColors = ButtonDefaults.buttonColors(
+                    containerColor = Color.DarkGray, // Цвет фона
+                    contentColor = Color.White  // Цвет текста
+                )
+
+                val buttonCurrentColors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary, // Цвет фона
+                    contentColor = Color.Gray  // Цвет текста
+                )
+
+                val buttonTextDayNameStyle = TextStyle(
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+
+                val buttonTextDayNameCurrentStyle = TextStyle(
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray
+                )
+
+                val buttonTextDayNumberStyle = TextStyle(
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center ,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                val buttonTextDayNumberCurrentStyle = TextStyle(
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center ,
+                    color = Color.White
+                )
+
+                for (i in 0..6) {
+                    val buttonColor = if (currentDayNumberOnly == daysNumbers[i]) buttonCurrentColors else buttonColors
+                    val textNameColor = if (currentDayNumberOnly == daysNumbers[i]) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
+                    val textDayColor = if (currentDayNumberOnly == daysNumbers[i]) buttonTextDayNumberCurrentStyle else buttonTextDayNumberStyle
+
+                    if (currentDayNumberOnly == daysNumbers[i]) {
+                        activeDayIndex = i
+                    }
+
+                    Button(
+                        onClick = {
+                            dayBias = dayBias + (i - activeDayIndex)
+                        },
+                        modifier = buttonModifier,
+                        colors = buttonColor,
+                        contentPadding = PaddingValues(10.dp)
+                    ) {
+                        Column (
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                daysNames[i],
+                                style = textNameColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Clip
+                            )
+                            Text(
+                                daysNumbers[i],
+                                style = textDayColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Clip
+                            )
+                        }
+                    }
+                }
+            }
+
+
             // Состояние недели (числитель / знаминатлеь)
             if (((todayIndex + dayBias + 14 * 10000) % 14) in 0..6) {
                 if (isNumerator) Text("Числитель")
-                else Text("Знаминатель")
+                else Text("Знаменатель")
             }
             else {
                 if (!isNumerator) Text("Числитель")
-                else Text("Знаминатель")
+                else Text("Знаменатель")
             }
 
-            // Дата активного дня
-            var currentDay = LocalDate.now().plusDays(dayBias.toLong())
-            var formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale("ru", "RU"))
-            var currentDayFormated = currentDay.format(formatter).split(" ")
-            var currentDayName = currentDayFormated[0]
-            var currentDayNumber = currentDayFormated[1] + " " + currentDayFormated[2]
+            // TODO: не показывается на экране (мб спрятана за днями недели). Нужно показывать только месяц
             Text(currentDayName)
             Text(currentDayNumber)
         }
