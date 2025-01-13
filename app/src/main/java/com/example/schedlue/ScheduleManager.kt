@@ -133,6 +133,25 @@ fun <T> fetchData(
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SchedlueScreen(navController: NavController){
+    if (!isKeyExist(LocalContext.current, LAST_SCHEDLUE)){
+        AppScaffold(
+            navController,
+            "Расписание"
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(10.dp, 0.dp),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    text = "У Вас пока нет расписаний (Нажмите \"+\" чтобы добавить расписание)"
+                )
+            }
+        }
+        return
+    }
     AppScaffold(
         navController,
         "Расписание"
