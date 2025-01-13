@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -127,15 +128,20 @@ fun HomeScreen(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
+    val showDialog = remember { mutableStateOf(false) }
+
     Column {
         TopAppBar(
             title = { Text(title) },
             modifier = Modifier.fillMaxWidth(), // Используем только ширину
             navigationIcon = {
                 Icon(
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            if (state.isOpen) state.close() else state.open()
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(start = 10.dp, end = 10.dp)
+                        .clickable {
+                            scope.launch {
+                                if (state.isOpen) state.close() else state.open()
                         }
                     },
                     imageVector = Icons.Filled.Menu,
@@ -144,9 +150,22 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
             },
             actions = {
                 Icon(
-                    modifier = Modifier.clickable {
-                        navController.navigate("settings")
-                    },
+                    modifier = Modifier
+                        .clickable {
+                            showDialog.value = true
+                        }
+                        .size(50.dp)
+                        .padding(end = 10.dp),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add schedule",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            navController.navigate("settings")
+                        },
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings"
                 )
@@ -157,6 +176,10 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
             color = MaterialTheme.colorScheme.onSurface,
             thickness = 1.dp // Толщина линии
         )
+    }
+
+    if (showDialog.value) {
+        ShowNewScheduleDialog(showDialog, navController)
     }
 }
 

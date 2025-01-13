@@ -70,7 +70,7 @@ fun AppScaffold(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val showDialog = remember { mutableStateOf(false) }
+//    val showDialog = remember { mutableStateOf(false) }
 
     // Добавляем флаг для определения, открыта панель или нет
     ModalNavigationDrawer(
@@ -88,34 +88,34 @@ fun AppScaffold(
                 content = {paddingValue ->
                     content(paddingValue)
                     // Кнопка в правом верхнем углу
-                    Box(
-                        modifier = Modifier
-                            .padding(paddingValue)
-                            .fillMaxSize()
-                    ){
-                        Button(
-                            onClick = {
-                                showDialog.value = true // Открыть диалог
-                            },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd) // Позиционируем в правый верхний угол
-                                .padding(16.dp) // Отступ от краёв
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Add schedule"
-                            )
-                        }
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .padding(paddingValue)
+//                            .fillMaxSize()
+//                    ){
+//                        Button(
+//                            onClick = {
+//                                showDialog.value = true // Открыть диалог
+//                            },
+//                            modifier = Modifier
+//                                .align(Alignment.TopEnd) // Позиционируем в правый верхний угол
+//                                .padding(16.dp) // Отступ от краёв
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Filled.Add,
+//                                contentDescription = "Add schedule"
+//                            )
+//                        }
+//                    }
                 },
                 topBar = { TopBar(title, drawerState, scope, navController) }
             )
         }
     )
 
-    if (showDialog.value) {
-        ShowNewScheduleDialog(showDialog, navController)
-    }
+//    if (showDialog.value) {
+//        ShowNewScheduleDialog(showDialog, navController)
+//    }
 }
 
 
