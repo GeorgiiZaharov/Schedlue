@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Icon
 import androidx.annotation.ColorRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -179,7 +180,7 @@ fun SchedlueScreen(navController: NavController){
         }
         else {
             deleteVariable(LocalContext.current, LAST_SCHEDLUE)
-            navController.navigate("home") {
+            navController.navigate("schedlue") {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
             return@AppScaffold
@@ -341,6 +342,7 @@ fun SchedlueScreenSchedlue(
                 .fillMaxSize()
                 .weight(4f)
         ){
+            // есть пары
             if (!schedlue[(todayIndex + dayBias + 14 * 10000) % 14].isEmpty()){
                 LazyColumn {
                     // Отображаем элементы списка
@@ -405,9 +407,6 @@ fun LessonCard(
     lesson: Lesson
 ){
     var isDialogOpen by remember { mutableStateOf(false) }
-    if (isDialogOpen) {
-        LessonCardInfo(lesson, {isDialogOpen = false})
-    }
 
     Row(
         modifier = Modifier
@@ -416,7 +415,7 @@ fun LessonCard(
                 width = 1.dp,
                 color = LocalContentColor.current
             )
-            .clickable {isDialogOpen = true},
+            .clickable {isDialogOpen = !isDialogOpen},
         verticalAlignment = Alignment.CenterVertically
     ) {
         // номер лекции
@@ -482,116 +481,46 @@ fun LessonCard(
                 )
             }
             Spacer(modifier = Modifier.height(14.dp))
+            AnimatedVisibility(isDialogOpen) {
+                LessonCardAddInfo(lesson)
+            }
 
         }
     }
 }
 
 @Composable
-fun LessonCardInfo(lesson: Lesson, onClose: ()->Unit) {
-    Dialog(onDismissRequest = onClose) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = lesson.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = onClose) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Закрыть"
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = "Время",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${lesson.startTime} - ${lesson.endTime}",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Аудитория",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = lesson.classroom,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Group,
-                        contentDescription = "Группа",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = lesson.group,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Преподаватель",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = lesson.lecturer,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Book,
-                        contentDescription = "Тип занятия",
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = lesson.type,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
+fun LessonCardAddInfo(lesson: Lesson) {
+    Column() {
+        Row() {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Преподаватель",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = lesson.lecturer,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Row() {
+            Icon(
+                imageVector = Icons.Default.Book,
+                contentDescription = "Тип занятия",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = lesson.type,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Spacer(modifier = Modifier.height(14.dp))
+
     }
+
 }
