@@ -272,6 +272,11 @@ fun SchedlueScreenSchedlue(
         else -> error("Непонятный ответ от API!!!")
     }
 
+    schedlue = schedlue.map { dailyLessons ->
+        dailyLessons.sortedBy { lesson -> lesson.number.toIntOrNull() ?: Int.MAX_VALUE }
+    }
+
+
     var isNumerator by remember { mutableStateOf(responseRes == "numerator") }
     var dayBias by remember { mutableStateOf(0) }
     var todayIndex = LocalDate.now().dayOfWeek.ordinal

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,12 +25,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -37,6 +42,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +97,63 @@ fun AppScaffold(
             )
         }
     )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
+    val showDialog = remember { mutableStateOf(false) }
+
+    Column {
+        TopAppBar(
+            title = { Text(title) },
+            modifier = Modifier.fillMaxWidth(), // Используем только ширину
+            navigationIcon = {
+                Icon(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(start = 10.dp, end = 10.dp)
+                        .clickable {
+                            scope.launch {
+                                if (state.isOpen) state.close() else state.open()
+                            }
+                        },
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Menu"
+                )
+            },
+            actions = {
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                            showDialog.value = true
+                        }
+                        .size(50.dp)
+                        .padding(end = 10.dp),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add schedule",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            navController.navigate("settings")
+                        },
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "Settings"
+                )
+            }
+        )
+        // Горизонтальная полоса
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.onSurface,
+            thickness = 1.dp // Толщина линии
+        )
+    }
+
+    if (showDialog.value) {
+        ShowNewScheduleDialog(showDialog, navController)
+    }
 }
 
 

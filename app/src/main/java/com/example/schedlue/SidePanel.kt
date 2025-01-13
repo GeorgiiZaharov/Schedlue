@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-
+// TODO remove backstack
 @Composable
 fun SlidingPanel(modifier: Modifier, navController: NavController, state: DrawerState) {
     Box(
@@ -40,6 +40,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
     ) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
+        val last_schedlue = getStringFromPrefs(context, LAST_SCHEDLUE)
         // Затемнение фона, если панель активна
         if (state.isOpen) {
             Box(
@@ -106,6 +107,11 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                         .clickable {
                                             set.value =
                                                 set.value.toMutableList().apply { remove(group) }
+
+                                            if (last_schedlue == group){
+                                                deleteVariable(context, LAST_SCHEDLUE)
+                                            }
+
                                             saveSetToPrefs(
                                                 context,
                                                 GROUPS_SCEDLUE,
@@ -164,6 +170,9 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                         .clickable {
                                             set.value =
                                                 set.value.toMutableList().apply { remove(lecturer) }
+                                            if (last_schedlue == lecturer){
+                                                deleteVariable(context, LAST_SCHEDLUE)
+                                            }
                                             saveSetToPrefs(
                                                 context,
                                                 LECTURERS_SCHEDLUE,
@@ -172,7 +181,6 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                         }
                                 )
                             }
-
                         }
                     }
                 }
