@@ -1,20 +1,17 @@
 package com.example.schedlue
 
-import android.app.LauncherActivity
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
@@ -32,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-// TODO remove backstack
+
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SlidingPanel(modifier: Modifier, navController: NavController, state: DrawerState) {
     Box(
@@ -96,7 +94,9 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                         .weight(1f)
                                         .clickable {
                                             saveStingToPrefs(context, LAST_SCHEDLUE, group)
-                                            navController.navigate("schedlue")
+                                            navController.navigate("schedlue"){
+                                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                            }
                                         }
                                 )
                                 Icon(
@@ -159,7 +159,9 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                         .weight(1f)
                                         .clickable {
                                             saveStingToPrefs(context, LAST_SCHEDLUE, lecturer)
-                                            navController.navigate("schedlue")
+                                            navController.navigate("schedlue") {
+                                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                            }
                                         }
                                 )
                                 Icon(
