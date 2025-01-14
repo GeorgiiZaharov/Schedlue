@@ -360,8 +360,8 @@ fun SchedlueScreenSchedlue(
                     .padding(5.dp)
 
                 val buttonColors = ButtonDefaults.buttonColors(
-                    containerColor = Color.DarkGray, // Цвет фона
-                    contentColor = Color.White  // Цвет текста
+                    containerColor = MaterialTheme.colorScheme.background, // Цвет фона
+                    contentColor = MaterialTheme.colorScheme.primary  // Цвет текста
                 )
 
                 val buttonCurrentColors = ButtonDefaults.buttonColors(

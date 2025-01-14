@@ -192,12 +192,13 @@ fun SettingsScreenAbout() {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Разработано: ",
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
         )
 
         // Создаем аннотированную строку для кликабельных ссылок
         val annotatedString = buildAnnotatedString {
-            append("danelloptz (GitHub: ")
+            append("Василенко Данил (GitHub: ")
             // Добавляем ссылку
             pushStringAnnotation(tag = "github1", annotation = "https://github.com/danelloptz")
             withStyle(style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(color = Color.Blue)) {
@@ -205,7 +206,7 @@ fun SettingsScreenAbout() {
             }
             pop()
 
-            append(") и GeorgiiZaharov (GitHub: ")
+            append(") \nЗахаров Георгий (GitHub: ")
             // Добавляем вторую ссылку
             pushStringAnnotation(tag = "github2", annotation = "https://github.com/GeorgiiZaharov")
             withStyle(style = MaterialTheme.typography.bodySmall.toSpanStyle().copy(color = Color.Blue)) {
@@ -225,7 +226,7 @@ fun SettingsScreenAbout() {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
             },
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
         )
     }
 }
