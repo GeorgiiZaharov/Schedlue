@@ -344,7 +344,8 @@ fun SchedlueScreenSchedlue(
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValue),
+            .padding(paddingValue)
+            .padding(20.dp, 0.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ){
         // информация о дне
@@ -498,15 +499,16 @@ fun SchedlueScreenSchedlue(
                 }
             }
         }
-        var buttons_weight = 0.3f
+        var buttons_weight = 0.4f
         if (isSmallScreen){
-            buttons_weight = 0.25f
+            buttons_weight = 0.35f
         }
         // Кнопки
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(buttons_weight),
+                .weight(buttons_weight)
+                .padding(0.dp, 10.dp, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -522,13 +524,16 @@ fun SchedlueScreenSchedlue(
                     }
                 }
             )
+
             Button(
                 onClick = {
                     dayBias = 0
                     currentIndexOfDay = todayIndex
                 }
             ) {
-                Text("Сегодня")
+                Text(
+                    "Сегодня"
+                )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
