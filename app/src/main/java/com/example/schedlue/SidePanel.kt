@@ -68,7 +68,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                         Text(
                             "Группы",
                             fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color.White
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -81,7 +81,15 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                 ).toMutableList()
                             )
                         }
+                        if (set.value.isEmpty()) {
+                            Text(
+                                "Нет добавленных групп",
+                                fontSize = 14.sp,
+                                color = Color.White,
+                            )
+                        }
                         set.value.forEach { group ->
+                            var color = if (group == last_schedlue) MaterialTheme.colorScheme.primary else Color.White
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -89,7 +97,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                 Text(
                                     group,
                                     fontSize = 17.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = color,
                                     modifier = Modifier
                                         .weight(1f)
                                         .clickable {
@@ -133,7 +141,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                         Text(
                             "Преподаватели",
                             fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = Color.White
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -146,7 +154,15 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                 ).toMutableList()
                             )
                         }
+                        if (set.value.isEmpty()) {
+                            Text(
+                                "Нет добавленных преподавателей",
+                                fontSize = 14.sp,
+                                color = Color.White,
+                            )
+                        }
                         set.value.forEach { lecturer ->
+                            var color = if (lecturer == last_schedlue) MaterialTheme.colorScheme.primary else Color.White
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -154,7 +170,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                                 Text(
                                     lecturer,
                                     fontSize = 17.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = color,
                                     modifier = Modifier
                                         .weight(1f)
                                         .clickable {
