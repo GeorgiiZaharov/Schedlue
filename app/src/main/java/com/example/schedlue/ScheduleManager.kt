@@ -219,7 +219,7 @@ fun InternetConnectionAllert(){
     var showDialog by remember { mutableStateOf(false) }
     // Задержка перед показом диалога
     LaunchedEffect(Unit) {
-        delay(2000) // Задержка 2 секунды
+        delay(3000) // Задержка 3 секунды
         showDialog = true
     }
 
@@ -461,8 +461,6 @@ fun SchedlueScreenSchedlue(
                 else Text("Знаменатель")
             }
 
-            // TODO: не показывается на экране (мб спрятана за днями недели). Нужно показывать только месяц
-            Text(currentDayName)
             Text(currentDayNumber)
         }
 
