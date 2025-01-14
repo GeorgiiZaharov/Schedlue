@@ -335,6 +335,10 @@ fun SchedlueScreenSchedlue(
     var currentDayNumber = currentDayFormated[1] + " " + currentDayFormated[2]
     var currentDayNumberOnly = currentDayFormated[1]
 
+    // Определяем размер экрана
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val isSmallScreen = screenWidth <= 360 // Условие для маленьких экранов
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -356,10 +360,6 @@ fun SchedlueScreenSchedlue(
                     .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Определяем размер экрана
-                val screenWidth = LocalConfiguration.current.screenWidthDp
-                val isSmallScreen = screenWidth <= 360 // Условие для маленьких экранов
-
                 // Настраиваем модификатор кнопки
                 val buttonModifier = Modifier
                     .weight(1f)
@@ -447,11 +447,15 @@ fun SchedlueScreenSchedlue(
             Text(currentDayNumber)
         }
 
+        var schedule_weight = 4f
+        if (isSmallScreen) {
+            schedule_weight = 2.5f
+        }
         // Расписание
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(4f)
+                .weight(schedule_weight)
         ){
             // есть пары
             if (!schedlue[(todayIndex + dayBias + 14 * 10000) % 14].isEmpty()){
@@ -477,12 +481,15 @@ fun SchedlueScreenSchedlue(
                 }
             }
         }
-
+        var buttons_weight = 0.3f
+        if (isSmallScreen){
+            buttons_weight = 0.25f
+        }
         // Кнопки
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(0.3f),
+                .weight(buttons_weight),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
