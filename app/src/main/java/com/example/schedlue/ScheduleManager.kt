@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,8 +55,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.modifier.modifierLocalMapOf
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -360,7 +361,6 @@ fun SchedlueScreenSchedlue(
                     .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Настраиваем модификатор кнопки
                 val buttonModifier = Modifier
                     .weight(1f)
                     .padding(5.dp)
@@ -413,25 +413,41 @@ fun SchedlueScreenSchedlue(
                         colors = buttonColor,
                         contentPadding = PaddingValues(10.dp)
                     ) {
-                        Column (
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        // Используем BoxWithConstraints для адаптации текста
+                        BoxWithConstraints(
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                daysNames[i],
-                                style = textNameColor,
-                                maxLines = 1,
-                                overflow = TextOverflow.Clip
-                            )
-                            Text(
-                                daysNumbers[i],
-                                style = textDayColor,
-                                maxLines = 1,
-                                overflow = TextOverflow.Clip
-                            )
+                            val maxFontSize = with(LocalDensity.current) {
+                                maxWidth.value.coerceAtMost(maxHeight.value) * 0.5 // Пропорциональный размер
+                            }
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = daysNames[i],
+                                    style = TextStyle(
+                                        fontSize = maxFontSize.sp,
+                                        textAlign = TextAlign.Center
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = daysNumbers[i],
+                                    style = TextStyle(
+                                        fontSize = (maxFontSize * 1.2).sp, // Немного больше для чисел
+                                        textAlign = TextAlign.Center
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }
             }
+
 
 
             // Состояние недели (числитель / знаминатлеь)
@@ -444,6 +460,8 @@ fun SchedlueScreenSchedlue(
                 else Text("Знаменатель")
             }
 
+            // TODO: не показывается на экране (мб спрятана за днями недели). Нужно показывать только месяц
+            Text(currentDayName)
             Text(currentDayNumber)
         }
 
