@@ -1,6 +1,5 @@
 package com.example.schedlue
 
-import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

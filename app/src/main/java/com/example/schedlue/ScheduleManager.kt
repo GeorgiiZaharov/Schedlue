@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -345,7 +346,7 @@ fun SchedlueScreenSchedlue(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(0.dp, 15.dp)
+                .padding(0.dp, 10.dp)
             ,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -355,43 +356,48 @@ fun SchedlueScreenSchedlue(
                     .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Определяем размер экрана
+                val screenWidth = LocalConfiguration.current.screenWidthDp
+                val isSmallScreen = screenWidth <= 360 // Условие для маленьких экранов
+
+                // Настраиваем модификатор кнопки
                 val buttonModifier = Modifier
                     .weight(1f)
                     .padding(5.dp)
 
                 val buttonColors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.background, // Цвет фона
-                    contentColor = MaterialTheme.colorScheme.primary  // Цвет текста
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
                 )
 
                 val buttonCurrentColors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary, // Цвет фона
-                    contentColor = Color.Gray  // Цвет текста
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.Gray
                 )
 
+                // Устанавливаем стили текста с адаптацией
                 val buttonTextDayNameStyle = TextStyle(
-                    fontSize = 16.sp,
+                    fontSize = if (isSmallScreen) 12.sp else 16.sp,
                     textAlign = TextAlign.Center
                 )
 
                 val buttonTextDayNameCurrentStyle = TextStyle(
-                    fontSize = 16.sp,
+                    fontSize = if (isSmallScreen) 12.sp else 16.sp,
                     textAlign = TextAlign.Center,
                     color = Color.Gray
                 )
 
                 val buttonTextDayNumberStyle = TextStyle(
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center ,
+                    fontSize = if (isSmallScreen) 16.sp else 20.sp,
+                    textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 val buttonTextDayNumberCurrentStyle = TextStyle(
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center ,
+                    fontSize = if (isSmallScreen) 16.sp else 20.sp,
+                    textAlign = TextAlign.Center,
                     color = Color.White
                 )
-
                 for (i in 0..6) {
                     val buttonColor = if (i == currentIndexOfDay) buttonCurrentColors else buttonColors
                     val textNameColor = if (i == currentIndexOfDay) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
@@ -438,8 +444,6 @@ fun SchedlueScreenSchedlue(
                 else Text("Знаменатель")
             }
 
-            // TODO: не показывается на экране (мб спрятана за днями недели). Нужно показывать только месяц
-            Text(currentDayName)
             Text(currentDayNumber)
         }
 
@@ -478,7 +482,7 @@ fun SchedlueScreenSchedlue(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(0.5f),
+                .weight(0.3f),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
