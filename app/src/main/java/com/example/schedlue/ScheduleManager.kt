@@ -318,14 +318,15 @@ fun SchedlueScreenSchedlue(
     var dayBias by remember { mutableStateOf(0) }
     var activeDayIndex by remember { mutableStateOf(0) }
     var todayIndex = LocalDate.now().dayOfWeek.ordinal
+    var currentIndexOfDay by remember { mutableStateOf(todayIndex) }
+
+    println("$currentIndexOfDay NIGGA")
 
     val daysNames = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
-    var shift = if (dayBias >= 0) dayBias / 7 else (abs(dayBias + 1) / 7 + 1) * -1
-
+    var shift by remember { mutableStateOf(0) }
     var daysNumbers = getCurrentWeekDays(shift)
 
     // Дата активного дня
-    val today = LocalDate.now().dayOfMonth
     var currentDay = LocalDate.now().plusDays(dayBias.toLong())
     var formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale("ru", "RU"))
     var currentDayFormated = currentDay.format(formatter).split(" ")
@@ -392,17 +393,15 @@ fun SchedlueScreenSchedlue(
                 )
 
                 for (i in 0..6) {
-                    val buttonColor = if (currentDayNumberOnly == daysNumbers[i]) buttonCurrentColors else buttonColors
-                    val textNameColor = if (currentDayNumberOnly == daysNumbers[i]) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
-                    val textDayColor = if (currentDayNumberOnly == daysNumbers[i]) buttonTextDayNumberCurrentStyle else buttonTextDayNumberStyle
+                    val buttonColor = if (i == currentIndexOfDay) buttonCurrentColors else buttonColors
+                    val textNameColor = if (i == currentIndexOfDay) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
+                    val textDayColor = if (i == currentIndexOfDay) buttonTextDayNumberCurrentStyle else buttonTextDayNumberStyle
 
-                    if (currentDayNumberOnly == daysNumbers[i]) {
-                        activeDayIndex = i
-                    }
 
                     Button(
                         onClick = {
-                            dayBias = dayBias + (i - activeDayIndex)
+                            dayBias = dayBias + (i - currentIndexOfDay)
+                            currentIndexOfDay = i
                         },
                         modifier = buttonModifier,
                         colors = buttonColor,
@@ -488,11 +487,17 @@ fun SchedlueScreenSchedlue(
                 contentDescription = "Back in schedlue",
                 modifier = Modifier.clickable {
                     dayBias --
+                    currentIndexOfDay--
+                    if (currentIndexOfDay < 0) {
+                        currentIndexOfDay = 6
+                        shift--
+                    }
                 }
             )
             Button(
                 onClick = {
                     dayBias = 0
+                    currentIndexOfDay = todayIndex
                 }
             ) {
                 Text("Сегодня")
@@ -502,6 +507,11 @@ fun SchedlueScreenSchedlue(
                 contentDescription = "Back in schedlue",
                 modifier = Modifier.clickable {
                     dayBias ++
+                    currentIndexOfDay++
+                    if (currentIndexOfDay > 6) {
+                        currentIndexOfDay = 0
+                        shift++
+                    }
                 }
             )
         }
@@ -523,7 +533,7 @@ fun LessonCard(
                 width = 1.dp,
                 color = LocalContentColor.current
             )
-            .clickable {isDialogOpen = !isDialogOpen},
+            .clickable { isDialogOpen = !isDialogOpen },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // номер лекции
