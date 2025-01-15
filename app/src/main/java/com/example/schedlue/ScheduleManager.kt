@@ -546,7 +546,7 @@ fun SchedlueScreenSchedlue(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(buttons_weight)
-                .padding(0.dp, 10.dp, 0.dp, 0.dp),
+                .padding(0.dp, 10.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
