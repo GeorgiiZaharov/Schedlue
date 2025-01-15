@@ -538,9 +538,6 @@ fun SchedlueScreenSchedlue(
             }
         }
         var buttons_weight = 0.4f
-        if (isSmallScreen){
-            buttons_weight = 0.35f
-        }
         // Кнопки
         Row(
             modifier = Modifier
