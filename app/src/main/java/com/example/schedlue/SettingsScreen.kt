@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -24,10 +26,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -41,6 +45,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.schedlue.ui.theme.DarkColorScheme
+import com.example.schedlue.ui.theme.LightColorScheme
 
 // Ключ для хранения в SharedPreferences
 const val THEME_KEY = "theme_preference"
@@ -52,16 +58,12 @@ const val DEFAULT_THEME = "default"
 fun getColorScheme(): ColorScheme {
     val isDarkTheme = isSystemInDarkTheme()
     val context = LocalContext.current
-    // Проверяем, установлена ли тема в SharedPreferences
-    return if (!isThemeSet(context) || getThemePreference(context) == DEFAULT_THEME) {
-        // Если тема не установлена, выбираем систему: светлая или темная
-        if (isDarkTheme) darkColorScheme()
-        else return lightColorScheme()
-    } else {
-        // Если тема установлена, выбираем из SharedPreferences
-        if (getThemePreference(context) == DARK_THEME) return darkColorScheme()
-        return lightColorScheme()
 
+    // Проверяем настройки темы
+    return if (!isThemeSet(context) || getThemePreference(context) == DEFAULT_THEME) {
+        if (isDarkTheme) DarkColorScheme else LightColorScheme
+    } else {
+        if (getThemePreference(context) == DARK_THEME) DarkColorScheme else LightColorScheme
     }
 }
 
@@ -81,16 +83,23 @@ fun SettingsScreen(navController: NavController) {
 fun SettingsScreenTopBar(navController: NavController) {
     TopAppBar(
         title = { Text("Настройки") },
-        modifier = Modifier.fillMaxWidth(), // Используем только ширину
+        modifier = Modifier
+            .fillMaxWidth(), // Используем только ширину
         navigationIcon = {
             Icon(
                 modifier = Modifier.clickable {
                     navController.popBackStack()
                 },
                 imageVector = Icons.Filled.ArrowBackIosNew,
-                contentDescription = "Back button"
+                contentDescription = "Back button",
+                tint = MaterialTheme.colorScheme.background
             )
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary, // Фон AppBar
+            titleContentColor = MaterialTheme.colorScheme.surface, // Цвет текста
+            navigationIconContentColor = MaterialTheme.colorScheme.surface // Цвет иконок
+        )
     )
 }
 
@@ -143,7 +152,9 @@ fun SettingsScreenContent(context: Context, modifier: Modifier) {
         expanded = false // Закрыть выпадающий список
     }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.secondary),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         // Отображение выпадающего списка и текста на экране
@@ -153,23 +164,45 @@ fun SettingsScreenContent(context: Context, modifier: Modifier) {
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Цветовая тема:")
+            Text(
+                text = "Цветовая тема:",
+                color = MaterialTheme.colorScheme.surface
+            )
 
             // Кнопка для открытия выпадающего списка
             TextButton(onClick = { expanded = !expanded }) {
                 // Отображаем выбранную тему (ключ, который связан с выбранной темой)
-                Text(text = themeOptions.entries.find { it.value == selectedTheme }?.key ?: "По умолчанию")
-                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown arrow")
+                Text(
+                    text = themeOptions.entries.find { it.value == selectedTheme }?.key ?: "По умолчанию",
+                    color = Color(0xFF9c80e7)
+                )
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown arrow",
+                    tint = Color(0xFF9c80e7)
+                )
             }
 
             // Выпадающий список
             DropdownMenu(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.tertiary
+                    ),
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
                 themeOptions.forEach { (key, value) ->
                     DropdownMenuItem(
                         onClick = { onThemeChange(value) },
+                        colors = MenuItemColors(
+                            textColor = MaterialTheme.colorScheme.surface, // Цвет текста
+                            leadingIconColor = MaterialTheme.colorScheme.primary, // Цвет иконки слева
+                            trailingIconColor = MaterialTheme.colorScheme.secondary, // Цвет иконки справа
+                            disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Цвет текста при отключённом состоянии
+                            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Цвет иконки слева при отключённом состоянии
+                            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f) // Цвет иконки справа при отключённом состоянии
+                        ),
                         text = { Text(key) }
                     )
                 }
@@ -193,7 +226,7 @@ fun SettingsScreenAbout() {
         Text(
             text = "Разработано: ",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = Color(0xFF9c80e7)
         )
 
         // Создаем аннотированную строку для кликабельных ссылок

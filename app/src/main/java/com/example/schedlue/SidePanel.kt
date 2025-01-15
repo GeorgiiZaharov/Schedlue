@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -68,7 +69,8 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                         Text(
                             "Группы",
                             fontSize = 24.sp,
-                            color = Color.White
+                            color = Color.White,
+                            textDecoration = TextDecoration.Underline
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -89,7 +91,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                             )
                         }
                         set.value.forEach { group ->
-                            var color = if (group == last_schedlue) MaterialTheme.colorScheme.primary else Color.White
+                            var color = if (group == last_schedlue) Color(0xFF9c80e7) else Color.White
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -141,7 +143,8 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                         Text(
                             "Преподаватели",
                             fontSize = 24.sp,
-                            color = Color.White
+                            color = Color.White,
+                            textDecoration = TextDecoration.Underline
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -162,7 +165,7 @@ fun SlidingPanel(modifier: Modifier, navController: NavController, state: Drawer
                             )
                         }
                         set.value.forEach { lecturer ->
-                            var color = if (lecturer == last_schedlue) MaterialTheme.colorScheme.primary else Color.White
+                            var color = if (lecturer == last_schedlue) Color(0xFF9c80e7) else Color.White
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically

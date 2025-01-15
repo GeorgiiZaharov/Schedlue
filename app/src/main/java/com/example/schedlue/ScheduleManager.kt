@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Icon
 import androidx.annotation.ColorRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -54,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -151,6 +154,7 @@ fun SchedlueScreen(navController: NavController){
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.secondary)
                     .padding(innerPadding)
                     .padding(10.dp, 0.dp),
                 contentAlignment = Alignment.Center
@@ -230,7 +234,7 @@ fun InternetConnectionAllert(){
         ) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.tertiary,
                 tonalElevation = 8.dp
             ) {
                 Column(
@@ -255,7 +259,8 @@ fun InternetConnectionAllert(){
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Отстутствует подключение к интернету"
+                        text = "Отстутствует подключение к интернету",
+                        color = MaterialTheme.colorScheme.surface
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -266,9 +271,27 @@ fun InternetConnectionAllert(){
                         Button(
                             onClick = {
                                 showDialog = false
-                            }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiary, // Цвет заливки кнопки
+                                contentColor = MaterialTheme.colorScheme.onTertiary // Цвет текста внутри кнопки
+                            ),
+                            modifier = Modifier
+                                .border(
+                                    width = 1.dp,
+                                    color = Color(0xFF9c80e7), // Цвет рамки
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.tertiary, // Цвет фона кнопки
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+
                         ) {
-                            Text("OK")
+                            Text(
+                                "OK",
+                                color = Color(0xFF9c80e7)
+                            )
                         }
                     }
                 }
@@ -344,6 +367,7 @@ fun SchedlueScreenSchedlue(
     Column (
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.secondary)
             .padding(paddingValue)
             .padding(20.dp, 0.dp),
         verticalArrangement = Arrangement.SpaceBetween
@@ -368,42 +392,17 @@ fun SchedlueScreenSchedlue(
                     .padding(5.dp)
 
                 val buttonColors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.primary
                 )
 
                 val buttonCurrentColors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF9c80e7),
                     contentColor = Color.Gray
                 )
 
-                // Устанавливаем стили текста с адаптацией
-                val buttonTextDayNameStyle = TextStyle(
-                    fontSize = if (isSmallScreen) 12.sp else 16.sp,
-                    textAlign = TextAlign.Center
-                )
-
-                val buttonTextDayNameCurrentStyle = TextStyle(
-                    fontSize = if (isSmallScreen) 12.sp else 16.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray
-                )
-
-                val buttonTextDayNumberStyle = TextStyle(
-                    fontSize = if (isSmallScreen) 16.sp else 20.sp,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                val buttonTextDayNumberCurrentStyle = TextStyle(
-                    fontSize = if (isSmallScreen) 16.sp else 20.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
                 for (i in 0..6) {
                     val buttonColor = if (i == currentIndexOfDay) buttonCurrentColors else buttonColors
-                    val textNameColor = if (i == currentIndexOfDay) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
-                    val textDayColor = if (i == currentIndexOfDay) buttonTextDayNumberCurrentStyle else buttonTextDayNumberStyle
 
 
                     Button(
@@ -423,24 +422,46 @@ fun SchedlueScreenSchedlue(
                                 maxWidth.value.coerceAtMost(maxHeight.value) * 0.5 // Пропорциональный размер
                             }
 
+                            // Устанавливаем стили текста с адаптацией
+                            val buttonTextDayNameStyle = TextStyle(
+                                fontSize = (maxFontSize * 1.2).sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.Gray
+                            )
+
+                            val buttonTextDayNameCurrentStyle = TextStyle(
+                                fontSize = (maxFontSize * 1.2).sp,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.surface
+                            )
+
+                            val buttonTextDayNumberStyle = TextStyle(
+                                fontSize = (maxFontSize * 1.2).sp,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.surface
+                            )
+
+                            val buttonTextDayNumberCurrentStyle = TextStyle(
+                                fontSize = (maxFontSize * 1.2).sp,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.surface
+                            )
+
+                            val textNameColor = if (i == currentIndexOfDay) buttonTextDayNameCurrentStyle else buttonTextDayNameStyle
+                            val textDayColor = if (i == currentIndexOfDay) buttonTextDayNumberCurrentStyle else buttonTextDayNumberStyle
+
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
                                     text = daysNames[i],
-                                    style = TextStyle(
-                                        fontSize = maxFontSize.sp,
-                                        textAlign = TextAlign.Center
-                                    ),
+                                    style = textNameColor,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = daysNumbers[i],
-                                    style = TextStyle(
-                                        fontSize = (maxFontSize * 1.2).sp, // Немного больше для чисел
-                                        textAlign = TextAlign.Center
-                                    ),
+                                    style = textDayColor,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -454,15 +475,30 @@ fun SchedlueScreenSchedlue(
 
             // Состояние недели (числитель / знаминатлеь)
             if (((todayIndex + dayBias + 14 * 10000) % 14) in 0..6) {
-                if (isNumerator) Text("Числитель")
-                else Text("Знаменатель")
+                if (isNumerator) Text(
+                    "Числитель",
+                    color = MaterialTheme.colorScheme.surface
+                )
+                else Text(
+                    "Знаменатель",
+                    color = MaterialTheme.colorScheme.surface
+                )
             }
             else {
-                if (!isNumerator) Text("Числитель")
-                else Text("Знаменатель")
+                if (!isNumerator) Text(
+                    "Числитель",
+                    color = MaterialTheme.colorScheme.surface
+                )
+                else Text(
+                    "Знаменатель",
+                    color = MaterialTheme.colorScheme.surface
+                )
             }
 
-            Text(currentDayNumber)
+            Text(
+                currentDayNumber,
+                color = MaterialTheme.colorScheme.surface
+            )
         }
 
         var schedule_weight = 4f
@@ -489,12 +525,14 @@ fun SchedlueScreenSchedlue(
             else {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.secondary),
                     contentAlignment = Alignment.Center
                 ){
                     Text(
                         "В этот день нет пар \uD83E\uDD73",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.surface
                     )
                 }
             }
@@ -522,17 +560,33 @@ fun SchedlueScreenSchedlue(
                         currentIndexOfDay = 6
                         shift--
                     }
-                }
+                },
+                tint = MaterialTheme.colorScheme.surface
             )
 
             Button(
                 onClick = {
                     dayBias = 0
                     currentIndexOfDay = todayIndex
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary, // Цвет заливки кнопки
+                    contentColor = MaterialTheme.colorScheme.onTertiary // Цвет текста внутри кнопки
+                ),
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.background, // Цвет рамки
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiary, // Цвет фона кнопки
+                        shape = RoundedCornerShape(20.dp)
+                    )
             ) {
                 Text(
-                    "Сегодня"
+                    "Сегодня",
+                    color = MaterialTheme.colorScheme.surface
                 )
             }
             Icon(
@@ -545,7 +599,8 @@ fun SchedlueScreenSchedlue(
                         currentIndexOfDay = 0
                         shift++
                     }
-                }
+                },
+                tint = MaterialTheme.colorScheme.surface
             )
         }
 
@@ -564,7 +619,12 @@ fun LessonCard(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = LocalContentColor.current
+                color = Color(0xFF9c80e7),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.tertiary,
+                shape = RoundedCornerShape(10.dp)
             )
             .clickable { isDialogOpen = !isDialogOpen },
         verticalAlignment = Alignment.CenterVertically
@@ -576,12 +636,20 @@ fun LessonCard(
                 .fillMaxSize()
                 .border(
                     width = 1.dp,
-                    color = LocalContentColor.current
+                    color = Color(0xFF9c80e7),
+                    shape = RoundedCornerShape(10.dp)
                 )
+                .background(
+                    color = Color(0xFF9c80e7),
+                    shape = RoundedCornerShape(10.dp)
+                )
+
                 .align(Alignment.Top),
             contentAlignment = Alignment.Center
         ){
-            Text(lesson.number)
+            Text(
+                lesson.number
+            )
         }
         // информация о лекции
         Column (
@@ -592,7 +660,11 @@ fun LessonCard(
         ){
             Spacer(modifier = Modifier.height(7.dp))
 
-            Text(lesson.title)
+            Text(
+                lesson.title,
+                color = MaterialTheme.colorScheme.surface
+
+            )
             Spacer(modifier = Modifier.height(14.dp))
 
             Row(
@@ -602,9 +674,13 @@ fun LessonCard(
             ){
                 Icon(
                     imageVector = Icons.Filled.Group,
-                    contentDescription = "Group Icon"
+                    contentDescription = "Group Icon",
+                    tint = MaterialTheme.colorScheme.surface
                 )
-                Text(lesson.group)
+                Text(
+                    lesson.group,
+                    color = MaterialTheme.colorScheme.surface
+                )
             }
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -615,21 +691,27 @@ fun LessonCard(
             ){
                 Icon(
                     imageVector = Icons.Filled.LocationOn,
-                    contentDescription = "Location Icon"
+                    contentDescription = "Location Icon",
+                    tint = MaterialTheme.colorScheme.surface
                 )
-                Text(lesson.classroom)
+                Text(
+                    lesson.classroom,
+                    color = MaterialTheme.colorScheme.surface
+                )
             }
             Spacer(modifier = Modifier.height(14.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Schedule,
                     contentDescription = "Время",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.surface
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "${lesson.startTime} - ${lesson.endTime}",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.surface
                 )
             }
             Spacer(modifier = Modifier.height(14.dp))
@@ -648,12 +730,14 @@ fun LessonCardAddInfo(lesson: Lesson) {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Преподаватель",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.surface
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = lesson.lecturer,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.surface
             )
         }
 
@@ -663,16 +747,16 @@ fun LessonCardAddInfo(lesson: Lesson) {
             Icon(
                 imageVector = Icons.Default.Book,
                 contentDescription = "Тип занятия",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.surface
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = lesson.type,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.surface
             )
         }
         Spacer(modifier = Modifier.height(14.dp))
-
     }
-
 }

@@ -2,6 +2,8 @@ package com.example.schedlue
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,6 +32,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -37,12 +41,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +63,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -89,7 +100,9 @@ fun AppScaffold(
         },
         content = {
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.secondary),
                 content = {paddingValue ->
                     content(paddingValue)
                 },
@@ -98,15 +111,80 @@ fun AppScaffold(
         }
     )
 }
+
+@Composable
+fun Close_button(showDialog: MutableState<Boolean>){
+    Button(
+        onClick = { showDialog.value = false },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiary, // Цвет заливки кнопки
+            contentColor = MaterialTheme.colorScheme.onTertiary // Цвет текста внутри кнопки
+        ),
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.background, // Цвет рамки
+                shape = RoundedCornerShape(20.dp)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.tertiary, // Цвет фона кнопки
+                shape = RoundedCornerShape(20.dp)
+            )
+
+    ) {
+        Text(
+            "Закрыть",
+            color = MaterialTheme.colorScheme.surface
+        )
+
+    }
+}
+
+@Composable
+fun Save_button(
+    showDialog: MutableState<Boolean>,
+    context: Context,
+    navController: NavController,
+    scheduleFilter: String
+){
+    Button(onClick = {
+        showDialog.value = false
+        saveGroup(scheduleFilter, context)
+        navController.navigate("schedlue")
+    },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiary, // Цвет заливки кнопки
+            contentColor = MaterialTheme.colorScheme.onTertiary // Цвет текста внутри кнопки
+        ),
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.background, // Цвет рамки
+                shape = RoundedCornerShape(20.dp)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.tertiary, // Цвет фона кнопки
+                shape = RoundedCornerShape(20.dp)
+            )
+    ) {
+        Text(
+            "Сохранить",
+            color = MaterialTheme.colorScheme.surface
+        )
+    }
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navController: NavController) {
     val showDialog = remember { mutableStateOf(false) }
 
-    Column {
+    Column  {
         TopAppBar(
             title = { Text(title) },
-            modifier = Modifier.fillMaxWidth(), // Используем только ширину
+            modifier = Modifier
+                .fillMaxWidth(),
             navigationIcon = {
                 Icon(
                     modifier = Modifier
@@ -131,7 +209,7 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
                         .padding(end = 10.dp),
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add schedule",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.background
                 )
                 Icon(
                     modifier = Modifier
@@ -140,14 +218,15 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
                             navController.navigate("settings")
                         },
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings"
+                    contentDescription = "Settings",
+                    tint = MaterialTheme.colorScheme.surface
                 )
-            }
-        )
-        // Горизонтальная полоса
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.onSurface,
-            thickness = 1.dp // Толщина линии
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary, // Фон AppBar
+                titleContentColor = MaterialTheme.colorScheme.surface, // Цвет текста
+                navigationIconContentColor = MaterialTheme.colorScheme.surface // Цвет иконок
+            )
         )
     }
 
@@ -157,6 +236,7 @@ fun TopBar(title: String, state: DrawerState, scope: CoroutineScope, navControll
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ShowNewScheduleDialog(
@@ -168,7 +248,7 @@ fun ShowNewScheduleDialog(
     ) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.tertiary,
             tonalElevation = 8.dp
         ) {
             Column(
@@ -178,7 +258,8 @@ fun ShowNewScheduleDialog(
             ) {
                 Text(
                     text = "Добавить расписание",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.background
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -200,14 +281,34 @@ fun ShowNewScheduleDialog(
                                 modifier = Modifier.clickable { expanded = !expanded }
                             )
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = MaterialTheme.colorScheme.background, // Цвет рамки в фокусе
+                            unfocusedBorderColor = MaterialTheme.colorScheme.surface, // Цвет рамки в неактивном состоянии
+                            focusedLabelColor = MaterialTheme.colorScheme.background, // Цвет метки в фокусе
+                            unfocusedLabelColor = MaterialTheme.colorScheme.surface, // Цвет метки в неактивном состоянии
+                            disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Цвет текста при отключённом состоянии
+                        )
                     )
                     DropdownMenu(
+                        modifier = Modifier
+                            .background(
+                                MaterialTheme.colorScheme.tertiary
+                            ),
+
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
                         options.forEach { option ->
                             DropdownMenuItem(
+                                colors = MenuItemColors(
+                                    textColor = MaterialTheme.colorScheme.surface, // Цвет текста
+                                    leadingIconColor = MaterialTheme.colorScheme.primary, // Цвет иконки слева
+                                    trailingIconColor = MaterialTheme.colorScheme.secondary, // Цвет иконки справа
+                                    disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Цвет текста при отключённом состоянии
+                                    disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Цвет иконки слева при отключённом состоянии
+                                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f) // Цвет иконки справа при отключённом состоянии
+                                ),
                                 text = { Text(option) },
                                 onClick = {
                                     selectedOption = option
@@ -238,7 +339,15 @@ fun ShowNewScheduleDialog(
                                 }
                             },
                             label = { Text("Введите номер группы") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.background, // Цвет границы при фокусе
+                                unfocusedBorderColor = MaterialTheme.colorScheme.surface, // Цвет границы без фокуса
+                                focusedLabelColor = MaterialTheme.colorScheme.background, // Цвет метки при фокусе
+                                unfocusedLabelColor = MaterialTheme.colorScheme.surface, // Цвет метки без фокуса
+                                containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f) // Цвет фона (слабая прозрачность)
+                            )
+
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -258,7 +367,8 @@ fun ShowNewScheduleDialog(
                                             filteredGroups = emptyList()
                                         }
                                         .padding(8.dp),
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.surface
                                 )
                             }
                         }
@@ -268,24 +378,17 @@ fun ShowNewScheduleDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Button(onClick = { showDialog.value = false }) {
-                                Text("Закрыть")
-                            }
+                            Close_button(showDialog)
                             Spacer(modifier = Modifier.width(8.dp))
 
                             if (responseRes!!.filter { group -> "${group.code} ${group.name}" == scheduleFilter && "${group.code} ${group.name}" != "" }.size != 0){
                                 val context = LocalContext.current
-                                Button(onClick = {
-                                    showDialog.value = false
-                                    saveGroup(scheduleFilter, context)
-                                    navController.navigate("schedlue")
-                                }) {
-                                    Text("Сохранить")
-                                }
+                                Save_button(showDialog, context, navController, scheduleFilter)
                             }
                         }
                     } else {
-                        Text("Нет интернет соединения")
+                        Text(
+                            "Нет интернет соединения")
                     }
 
                 }
@@ -307,7 +410,14 @@ fun ShowNewScheduleDialog(
                                 }
                             },
                             label = { Text("Введите имя преподавателя") },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.background, // Цвет границы при фокусе
+                                unfocusedBorderColor = MaterialTheme.colorScheme.surface, // Цвет границы без фокуса
+                                focusedLabelColor = MaterialTheme.colorScheme.background, // Цвет метки при фокусе
+                                unfocusedLabelColor = MaterialTheme.colorScheme.surface, // Цвет метки без фокуса
+                                containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f) // Цвет фона (слабая прозрачность)
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -327,34 +437,30 @@ fun ShowNewScheduleDialog(
                                             filteredLecturers = emptyList()
                                         }
                                         .padding(8.dp),
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.surface
                                 )
                             }
                         }
+
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Button(onClick = { showDialog.value = false }) {
-                                Text("Закрыть")
-                            }
+                            Close_button(showDialog)
                             Spacer(modifier = Modifier.width(8.dp))
 
                             if (responseRes!!.filter { lecturer -> lecturer.name == scheduleFilter && lecturer.name != "" }.size != 0){
                                 val context = LocalContext.current
-                                Button(onClick = {
-                                    // Обработка сохранения
-                                    showDialog.value = false
-                                    saveLecturer(scheduleFilter, context)
-                                    navController.navigate("schedlue")
-                                }) {
-                                    Text("Сохранить")
-                                }
+                                Save_button(showDialog, context, navController, scheduleFilter)
                             }
                         }
                     } else {
-                        Text("Нет интернет соединения")
+                        Text(
+                            "Нет интернет соединения",
+                            color = MaterialTheme.colorScheme.background
+                        )
                     }
 
                 }
