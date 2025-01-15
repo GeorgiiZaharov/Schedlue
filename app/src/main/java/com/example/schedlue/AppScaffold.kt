@@ -389,7 +389,9 @@ fun ShowNewScheduleDialog(
                         }
                     } else {
                         Text(
-                            "Нет интернет соединения")
+                            "Нет интернет соединения",
+                            color = MaterialTheme.colorScheme.background
+                            )
                     }
 
                 }
