@@ -145,11 +145,12 @@ fun Save_button(
     showDialog: MutableState<Boolean>,
     context: Context,
     navController: NavController,
-    scheduleFilter: String
+    scheduleFilter: String,
+    func: (String, Context) -> Unit
 ){
     Button(onClick = {
         showDialog.value = false
-        saveGroup(scheduleFilter, context)
+        func(scheduleFilter, context)
         navController.navigate("schedlue")
     },
         colors = ButtonDefaults.buttonColors(
@@ -383,7 +384,7 @@ fun ShowNewScheduleDialog(
 
                             if (responseRes!!.filter { group -> "${group.code} ${group.name}" == scheduleFilter && "${group.code} ${group.name}" != "" }.size != 0){
                                 val context = LocalContext.current
-                                Save_button(showDialog, context, navController, scheduleFilter)
+                                Save_button(showDialog, context, navController, scheduleFilter, ::saveGroup)
                             }
                         }
                     } else {
@@ -453,7 +454,7 @@ fun ShowNewScheduleDialog(
 
                             if (responseRes!!.filter { lecturer -> lecturer.name == scheduleFilter && lecturer.name != "" }.size != 0){
                                 val context = LocalContext.current
-                                Save_button(showDialog, context, navController, scheduleFilter)
+                                Save_button(showDialog, context, navController, scheduleFilter, ::saveLecturer)
                             }
                         }
                     } else {
